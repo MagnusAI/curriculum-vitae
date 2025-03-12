@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta property="og:title" content="Magnus Arnild - CV">
-    <meta property="og:description" content="Software Engineer CV and Portfolio">
-    <meta property="og:image" content="https://media.licdn.com/dms/image/v2/C4D03AQF3XNy1AgTxVg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1562070502000?e=1747267200&v=beta&t=t_ZHYwZBH5w57pKQR4Fqe99TG6Wt9jJP126gbRldcUw">
-    <meta property="og:url" content="https://magnusai.github.io/curriculum-vitae/">
-    <title>{{ page.title }}</title>
-    <link rel="icon" type="image/x-icon" href="{{ '/assets/media/favicon.ico' | relative_url }}">
-    <link rel="stylesheet" href="/assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta property="og:title" content="Magnus Arnild - CV">
+  <meta property="og:description" content="Software Engineer CV and Portfolio">
+  <meta property="og:image"
+    content="https://media.licdn.com/dms/image/v2/C4D03AQF3XNy1AgTxVg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1562070502000?e=1747267200&v=beta&t=t_ZHYwZBH5w57pKQR4Fqe99TG6Wt9jJP126gbRldcUw">
+  <meta property="og:url" content="https://magnusai.github.io/curriculum-vitae/">
+  <title>{{ page.title }}</title>
+  <link rel="icon" type="image/x-icon" href="{{ '/assets/media/favicon.ico' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.js" defer></script>
 </head>
-<body>
-    <nav>
-        <a href="{{ '/' | relative_url }}">Home</a> |
-        <a href="{{ '/projects' | relative_url }}">Projects</a> |
-        <a href="{{ '/contact' | relative_url }}">Contact</a>
-    </nav>    
-    <main>
-        {{ content }}
-    </main>
+
+<body class="bg-teal-700 text-white">
+  {% include navbar.html %}
+  <main class="flex flex-col place-items-center w-full mt-8">
+    {{ content }}
+  </main>
 </body>
+
+
 </html>
