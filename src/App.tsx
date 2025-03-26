@@ -21,8 +21,8 @@ function App() {
 
   // Skills data
   const skills = [
-    'React', 'TypeScript', 'Node.js', 'Express',
-    'MongoDB', 'GraphQL', 'Next.js', 'Chakra UI', 'Git'
+    'Java', 'TypeScript', 'Node.js', 'Kotlin',
+    'C#', 'Python', 'Nextjs', 'Infrastructure as Code', 'Git', 'AWS Cloud Services', 'Docker', 'Domain Driven Design', 'Microservices', 'Fullstack', 'Agile Methodologies', 'Cypress', 'JUnit', 'Jest', 'Storybook', 'Contentful (CMS)', 'Sanity (CMS)', 'OpsGenie', 'Jira', 'Hexagonal Architecture'
   ]
 
   // Summary data

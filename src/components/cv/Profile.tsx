@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Heading,
   Text,
@@ -25,8 +24,8 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
 
   return (
-    <Flex 
-      direction={{ base: 'column', md: 'row' }} 
+    <Flex
+      direction={{ base: 'column', md: 'row' }}
       align={{ base: 'center', md: 'flex-start' }}
       gap={8}
     >
@@ -38,7 +37,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
         border="4px solid"
         borderColor={borderColor}
       />
-      
+
       <Stack align="flex-start" gap={3} w="100%" flex="1">
         <Heading as="h1" size="xl" color={headingColor}>
           {name}
@@ -49,7 +48,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
         <Text color={textColor} fontSize="md">
           {bio}
         </Text>
-        
+
         <HStack gap={4} mt={2} w="100%" display="flex" flexWrap="wrap" justifyContent={{ base: 'center', md: 'flex-start' }}>
           <Button
             size="sm"
