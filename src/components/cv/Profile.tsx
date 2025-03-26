@@ -6,7 +6,8 @@ import {
   HStack,
   Image,
   Icon,
-  Button
+  Button,
+  Box
 } from '@chakra-ui/react'
 import { useColorModeValue } from '../ui/color-mode'
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa'
@@ -22,6 +23,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
   const headingColor = useColorModeValue('gray.700', 'white')
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const bgColor = useColorModeValue('gray.50', 'gray.800')
 
   return (
     <Flex
@@ -29,14 +31,25 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
       align={{ base: 'center', md: 'flex-start' }}
       gap={8}
     >
-      <Image
+      <Box
         borderRadius="full"
         boxSize={{ base: '150px', md: '180px', xl: '200px' }}
-        src={imageUrl}
-        alt={`${name}'s profile picture`}
         border="4px solid"
         borderColor={borderColor}
-      />
+        overflow="hidden"
+        flexShrink={0}
+        position="relative"
+        bg={bgColor}
+      >
+        <Image
+          src={imageUrl}
+          alt={`${name}'s profile picture`}
+          width="100%"
+          height="100%"
+          objectFit="cover"
+          objectPosition="center 20%"
+        />
+      </Box>
 
       <Stack align="flex-start" gap={3} w="100%" flex="1">
         <Heading as="h1" size="xl" color={headingColor}>

@@ -1,4 +1,4 @@
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Stack } from '@chakra-ui/react'
 import { Divider } from './components/ui/Divider'
 import {
   Layout,
@@ -9,24 +9,48 @@ import {
   CallToAction
 } from './components/cv'
 import './App.css'
+import profileImage from './assets/profile_image.png'
 
 function App() {
   // Profile data
   const profileData = {
-    name: "John Doe",
-    title: "Full Stack Developer",
-    bio: "Passionate developer with over 5 years of experience building web applications. Specialized in React, TypeScript, and modern web technologies.",
-    imageUrl: "https://placehold.co/400x400?text=Profile"
+    name: "Magnus Arnild",
+    title: "Software Engineer",
+    bio: "Passionate Software Engineer with a focus on building scalable cloud-native applications for financial services.",
+    imageUrl: profileImage
   }
 
-  // Skills data
-  const skills = [
-    'Java', 'TypeScript', 'Node.js', 'Kotlin',
-    'C#', 'Python', 'Nextjs', 'Infrastructure as Code', 'Git', 'AWS Cloud Services', 'Docker', 'Domain Driven Design', 'Microservices', 'Fullstack', 'Agile Methodologies', 'Cypress', 'JUnit', 'Jest', 'Storybook', 'Contentful (CMS)', 'Sanity (CMS)', 'OpsGenie', 'Jira', 'Hexagonal Architecture'
+  // Skills data organized by categories
+  const skillCategories = [
+    {
+      name: "Languages & Frameworks",
+      skills: ['Java', 'TypeScript', 'Node.js', 'Kotlin', 'C#', 'Python', 'React', 'Next.js'],
+      colorScheme: "blue"
+    },
+    {
+      name: "Architecture & Design",
+      skills: ['Infrastructure as Code', 'Hexagonal Architecture', 'Domain Driven Design', 'Microservices'],
+      colorScheme: "purple"
+    },
+    {
+      name: "Cloud & Tooling",
+      skills: ['AWS Cloud Services', 'Docker', 'OpsGenie', 'Git', 'Contentful (CMS)', 'Sanity (CMS)'],
+      colorScheme: "teal"
+    },
+    {
+      name: "Development Practices",
+      skills: ['Fullstack Development', 'Frontend Development', 'Backend Development', 'Agile Methodologies', 'CI/CD', 'Scrum', 'Kanban'],
+      colorScheme: "green"
+    },
+    {
+      name: "Testing & Tooling",
+      skills: ['JUnit', 'Cypress', 'Jest', 'Storybook', 'Jira'],
+      colorScheme: "orange"
+    }
   ]
 
   // Summary data
-  const summary = "Experienced software engineer with a strong foundation in full-stack development. Proven track record of delivering high-quality web applications using modern frameworks. Adept at collaborating in agile teams and committed to clean, maintainable code."
+  const summary = "Software Engineer with experience in financial services and fullstack development. Skilled in building scalable, cloud-native applications using modern technologies such as Java, TypeScript, and AWS. Adept in both frontend and backend development"
 
   // Projects data
   const projects = [
@@ -47,27 +71,12 @@ function App() {
 
       <Divider />
 
-      {/* Summary Section - Grid Layout for widescreen displays */}
-      <Grid
-        templateColumns={{
-          base: "1fr",
-          lg: "1fr 1fr",
-          xl: "1fr 1fr 1fr"
-        }}
-        gap={{ base: 6, lg: 8 }}
-      >
-        <GridItem colSpan={{ base: 1, xl: 3 }}>
-          <Summary content={summary} />
-        </GridItem>
-
-        <GridItem>
-          <Skills skills={skills} />
-        </GridItem>
-
-        <GridItem colSpan={{ base: 1, lg: 1, xl: 2 }}>
-          <Projects projects={projects} />
-        </GridItem>
-      </Grid>
+      {/* Content sections */}
+      <Stack gap={6}>
+        <Summary content={summary} />
+        <Skills categories={skillCategories} />
+        <Projects projects={projects} />
+      </Stack>
 
       <Divider />
 
