@@ -18,19 +18,20 @@ export function Layout({ children }: LayoutProps) {
   const textColor = useColorModeValue('gray.600', 'gray.300')
 
   return (
-    <Box bg={bgColor} minH="100vh" py={10}>
+    <Box bg={bgColor} minH="100vh" py={6}>
       <Container
         maxW={{ 
-          base: "container.sm", 
+          base: "100%", 
+          sm: "100%", 
           md: "container.md", 
           lg: "container.lg",
           xl: "container.xl", 
           "2xl": "8xl" 
         }} 
-        px={{ base: 4, md: 6, lg: 8 }}
+        px={{ base: 2, sm: 4, md: 6, lg: 8 }}
       >
         {/* Header with Dark Mode Toggle */}
-        <Flex justifyContent="flex-end" mb={4}>
+        <Flex justifyContent="flex-end" mb={3}>
           <ColorModeButton />
         </Flex>
         
@@ -39,17 +40,18 @@ export function Layout({ children }: LayoutProps) {
           bg={cardBgColor} 
           borderRadius="lg" 
           boxShadow="md" 
-          p={{ base: 6, md: 8 }}
+          p={{ base: 3, sm: 4, md: 6, lg: 8 }}
           border="1px"
           borderColor={borderColor}
           mx="auto"
           w="100%"
+          overflow="hidden"
         >
           {children}
         </Box>
         
-        <Text textAlign="center" fontSize="sm" color={textColor} mt={6}>
-          © {new Date().getFullYear()} John Doe - Built with React and Chakra UI
+        <Text textAlign="center" fontSize="xs" color={textColor} mt={4}>
+          © {new Date().getFullYear()} Magnus Arnild - Built with React and Chakra UI
         </Text>
       </Container>
     </Box>

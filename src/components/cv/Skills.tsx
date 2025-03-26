@@ -28,27 +28,26 @@ export function Skills({ categories }: SkillsProps) {
   const bgColor = useColorModeValue('gray.50', 'gray.800')
   
   return (
-    <Box>
+    <Box width="100%" overflow="hidden">
       <Heading 
         as="h2" 
-        size="md" 
-        mb={4} 
+        size="sm" 
+        mb={3} 
         color={headingColor}
         display="flex"
         alignItems="center"
-        gap={2}
+        gap={1.5}
       >
         <Box
           w={1}
-          h={6}
+          h={4}
           bg={useColorModeValue('purple.500', 'purple.300')}
-          mr={1}
         />
         Professional Skills
       </Heading>
       
       <Stack 
-        gap={4} 
+        gap={2.5} 
         width="100%" 
         align="stretch"
       >
@@ -59,26 +58,27 @@ export function Skills({ categories }: SkillsProps) {
             border="1px solid"
             borderColor={borderColor}
             overflow="hidden"
+            width="100%"
           >
             {/* Category Header */}
             <Flex 
               bg={useColorModeValue(`${category.colorScheme}.50`, `${category.colorScheme}.900`)} 
-              py={2} 
-              px={4} 
+              py={1.5} 
+              px={2.5} 
               borderBottom="1px"
               borderColor={borderColor}
               align="center"
               justify="space-between"
             >
-              <Flex align="center" gap={2}>
+              <Flex align="center" gap={1.5}>
                 <Icon 
                   as={FaStar} 
                   color={useColorModeValue(`${category.colorScheme}.500`, `${category.colorScheme}.200`)} 
-                  boxSize={3}
+                  boxSize={2.5}
                 />
                 <Text 
                   fontWeight="bold" 
-                  fontSize="sm" 
+                  fontSize="xs" 
                   color={useColorModeValue(`${category.colorScheme}.700`, `${category.colorScheme}.200`)}
                 >
                   {category.name}
@@ -86,9 +86,9 @@ export function Skills({ categories }: SkillsProps) {
               </Flex>
               
               <Badge
-                fontSize="xs"
+                fontSize="2xs"
                 colorScheme={category.colorScheme}
-                px={2}
+                px={1.5}
                 borderRadius="full"
               >
                 {category.skills.length}
@@ -96,25 +96,24 @@ export function Skills({ categories }: SkillsProps) {
             </Flex>
             
             {/* Skills List */}
-            <Box py={3} px={4} bg={bgColor}>
+            <Box py={2} px={2.5} bg={bgColor}>
               <Flex 
                 wrap="wrap" 
-                gap={2} 
+                gap={1.5} 
                 justifyContent="flex-start"
               >
                 {category.skills.map((skill) => (
                   <Badge 
                     key={skill} 
                     colorScheme={category.colorScheme}
-                    px={3} 
-                    py={1} 
+                    px={2} 
+                    py={0.5} 
                     borderRadius="md"
-                    fontSize="xs"
+                    fontSize="2xs"
                     fontWeight="medium"
                     variant="subtle"
                     _hover={{
-                      transform: 'translateY(-2px)',
-                      boxShadow: 'sm',
+                      transform: 'translateY(-1px)',
                       transition: 'all 0.2s ease'
                     }}
                     transition="all 0.2s ease"

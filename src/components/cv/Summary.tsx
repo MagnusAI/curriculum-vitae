@@ -20,38 +20,38 @@ export function Summary({ content }: SummaryProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   
   return (
-    <Box>
+    <Box width="100%" overflow="hidden">
       <Heading 
         as="h2" 
-        size="md" 
-        mb={4} 
+        size="sm" 
+        mb={3} 
         color={headingColor}
         display="flex"
         alignItems="center"
-        gap={2}
+        gap={1.5}
       >
         <Box
           w={1}
-          h={6}
+          h={4}
           bg={accentColor}
-          mr={1}
         />
         Professional Summary
       </Heading>
       
       <Box 
-        p={5}
+        p={{ base: 3, md: 4 }}
         position="relative"
         borderRadius="md"
         bg={bgColor}
         boxShadow="sm"
         border="1px solid"
         borderColor={borderColor}
+        width="100%"
       >
         <Icon 
           as={FaQuoteLeft} 
           color={accentColor} 
-          boxSize={6} 
+          boxSize={{ base: 4, md: 5 }} 
           opacity={0.5}
           position="absolute"
           top={3}
@@ -60,10 +60,10 @@ export function Summary({ content }: SummaryProps) {
         
         <Text 
           color={textColor} 
-          fontSize={{ base: 'sm', md: 'md' }}
+          fontSize={{ base: 'xs', md: 'sm' }}
           fontStyle="italic"
-          px={8}
-          py={2}
+          pl={{ base: 6, md: 7 }}
+          pr={{ base: 3, md: 4 }}
           lineHeight="tall"
         >
           {content}

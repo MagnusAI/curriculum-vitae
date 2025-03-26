@@ -8,11 +8,13 @@ import {
   Badge,
   Icon,
   useBreakpointValue,
-  useDisclosure
+  Grid,
+  GridItem
 } from '@chakra-ui/react'
 import { useColorModeValue } from '../ui/color-mode'
 import { FaBriefcase, FaGraduationCap, FaCalendarAlt, FaMapMarkerAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { useState } from 'react'
+import React from 'react'
 
 export interface TimelineItem {
   title: string;
@@ -50,21 +52,23 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
     setIsExpanded(!isExpanded);
   };
 
+  // Height of timeline marker
+  const markerSize = timelineMarkerSize || 8;
+
   return (
     <Box 
-      key={index}
       position="relative"
       borderLeft="2px solid"
       borderColor={accentColor}
       pl={timelinePadding}
-      pb={isLast ? 0 : 6}
+      pb={isLast ? 0 : 2}
       _before={{
         content: '""',
         position: 'absolute',
         top: '0',
         left: timelineMarkerOffset,
-        width: `${timelineMarkerSize}px`,
-        height: `${timelineMarkerSize}px`,
+        width: `${markerSize}px`,
+        height: `${markerSize}px`,
         borderRadius: 'full',
         bg: accentColor,
         border: '2px solid',
@@ -78,121 +82,98 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
         borderWidth="1px"
         borderColor={isExpanded ? accentColor : borderColor}
         overflow="hidden"
-        boxShadow={isExpanded ? "md" : "sm"}
+        boxShadow="sm"
         transition="all 0.2s"
         _hover={{
-          boxShadow: "md",
-          borderColor: accentColor,
-          transform: isExpanded ? "none" : "translateY(-1px)"
+          borderColor: accentColor
         }}
         cursor="pointer"
         onClick={toggleExpand}
+        width="100%"
+        maxW="100%"
       >
-        <Box p={{ base: isExpanded ? 3 : 2, md: isExpanded ? 4 : 3 }}>
-          <Flex 
-            justify="space-between" 
-            flexWrap="wrap" 
-            mb={item.description && isExpanded ? { base: 2, md: 3 } : 0}
-            direction={{ base: 'column', sm: 'row' }}
-            gap={{ base: 1, sm: 0 }}
-            align="center"
-          >
-            <Flex align="center" justify="space-between" width={{ base: '100%', sm: 'auto' }}>
-              <Box>
-                <Heading 
-                  as="h3" 
-                  size="sm" 
-                  mb={1}
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <Icon 
-                    as={item.type === 'work' ? FaBriefcase : FaGraduationCap} 
-                    color={accentColor} 
-                    boxSize={{ base: 3, md: 4 }} 
-                  />
-                  {item.title}
-                </Heading>
-                <Text 
-                  fontWeight="medium" 
-                  fontSize={{ base: 'sm', md: 'md' }}
-                  color={headingColor}
-                >
-                  {item.organization}
-                </Text>
-              </Box>
-              
-              {/* Desktop version shows the expand/collapse icon on the right */}
-              <Icon 
-                as={isExpanded ? FaChevronUp : FaChevronDown} 
-                boxSize={4} 
-                color={accentColor}
-                display={{ base: "none", sm: "block" }}
-                ml={2}
-              />
-            </Flex>
-
-            <Flex align="center" justify="space-between" width={{ base: '100%', sm: 'auto' }}>
-              <HStack gap={2} display={{ base: 'flex', sm: 'none' }}>
-                <Icon as={FaMapMarkerAlt} color={textColor} boxSize={3} />
-                <Text fontSize="sm" color={textColor}>
-                  {item.location}
-                </Text>
-              </HStack>
-
-              <Badge 
-                colorScheme={item.type === 'work' ? 'blue' : 'purple'}
-                alignSelf={{ base: 'flex-start', sm: 'flex-start' }}
-                px={2}
-                py={1}
-                borderRadius="md"
-                fontSize="xs"
+        <Box py={1.5} px={2}>
+          {/* Main header - always visible */}
+          <Flex direction="column" gap={0.5}>
+            {/* Title */}
+            <Flex 
+              justify="space-between" 
+              align="center"
+              w="full"
+            >
+              <Text 
+                fontWeight="bold" 
+                fontSize="sm" 
+                color={headingColor}
+                maxW="70%"
+                textOverflow="ellipsis" 
+                overflow="hidden" 
+                whiteSpace="nowrap"
                 display="flex"
                 alignItems="center"
-                justifyContent="center"
-                gap={1}
-                width={{ base: 'fit-content', sm: 'auto' }}
+                gap={1.5}
               >
-                <Icon as={FaCalendarAlt} boxSize={3} />
-                {item.period}
-              </Badge>
+                <Icon 
+                  as={item.type === 'work' ? FaBriefcase : FaGraduationCap} 
+                  color={accentColor} 
+                  boxSize={2.5}
+                  flexShrink={0}
+                />
+                {item.title}
+              </Text>
               
-              {/* Mobile version shows the expand/collapse icon below */}
-              <Icon 
-                as={isExpanded ? FaChevronUp : FaChevronDown} 
-                boxSize={4} 
-                color={accentColor}
-                display={{ base: "block", sm: "none" }}
-              />
+              <Flex align="center" gap={1.5}>
+                <Text fontSize="xs" color={textColor} fontWeight="medium">
+                  {item.period}
+                </Text>
+                <Icon 
+                  as={isExpanded ? FaChevronUp : FaChevronDown} 
+                  boxSize={3} 
+                  color={accentColor}
+                />
+              </Flex>
+            </Flex>
+            
+            {/* Organization & Location */}
+            <Flex 
+              justify="space-between" 
+              align="center"
+              w="full"
+            >
+              <Text 
+                fontSize="xs"
+                color={headingColor}
+                maxW="60%"
+                textOverflow="ellipsis" 
+                overflow="hidden" 
+                whiteSpace="nowrap"
+              >
+                {item.organization}
+              </Text>
+              
+              <Flex align="center" gap={1}>
+                <Icon as={FaMapMarkerAlt} color={textColor} boxSize={2} />
+                <Text fontSize="xs" color={textColor}>
+                  {item.location}
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
           
-          {/* This is always visible on larger screens, but hidden on mobile unless expanded */}
-          <Box display={{ base: 'none', sm: 'block' }}>
-            <HStack gap={2} mb={isExpanded ? 3 : 0} mt={2}>
-              <Icon as={FaMapMarkerAlt} color={textColor} boxSize={3} />
-              <Text fontSize="sm" color={textColor}>
-                {item.location}
-              </Text>
-            </HStack>
-          </Box>
-          
-          {/* Collapsible description */}
+          {/* Expandable content */}
           {isExpanded && item.description && (
             <Box 
-              mt={3} 
-              className="timeline-description" 
-              opacity={isExpanded ? 1 : 0}
-              transform={isExpanded ? "translateY(0)" : "translateY(-10px)"}
-              transition="opacity 0.3s ease, transform 0.3s ease"
+              mt={2}
+              pt={1.5}
+              borderTopWidth="1px"
+              borderTopColor={borderColor}
             >
-              <VStack align="start" gap={2}>
+              <VStack align="stretch" gap={1}>
                 {item.description.map((desc, i) => (
-                  <Flex key={i} align="flex-start" gap={2}>
-                    <Text as="span" color={accentColor} mt={1.5}>•</Text>
+                  <Flex key={i} align="flex-start" gap={1.5}>
+                    <Text as="span" color={accentColor} fontSize="xs" lineHeight="tall" mt={0.5}>•</Text>
                     <Text 
-                      fontSize={{ base: 'xs', md: 'sm' }}
+                      fontSize="xs"
                       color={textColor}
                       lineHeight="tall"
                     >
@@ -218,39 +199,38 @@ export function Timeline({ items, title, type }: TimelineProps) {
     ? useColorModeValue('blue.500', 'blue.300')
     : useColorModeValue('purple.500', 'purple.300')
   
-  // Responsive spacing adjustments
-  const timelinePadding = useBreakpointValue({ base: 4, md: 6 })
-  const timelineMarkerSize = useBreakpointValue({ base: 12, md: 14 })
-  const timelineMarkerOffset = useBreakpointValue({ base: -6, md: -8 })
+  // Responsive spacing adjustments - extra compact
+  const timelinePadding = useBreakpointValue({ base: 2.5, md: 4 })
+  const timelineMarkerSize = useBreakpointValue({ base: 6, md: 8 })
+  const timelineMarkerOffset = useBreakpointValue({ base: -3, md: -4 })
 
   return (
     <Box>
       <Heading 
         as="h2" 
-        size="md" 
-        mb={5} 
+        size="sm"
+        mb={1.5}
         color={headingColor}
         display="flex"
         alignItems="center"
-        gap={2}
+        gap={1.5}
       >
         <Box
           w={1}
-          h={6}
+          h={4}
           bg={accentColor}
-          mr={1}
         />
         {title}
       </Heading>
       
-      <Box mb={2} fontSize="xs" color={textColor} fontStyle="italic" ml={4}>
+      <Box mb={1} fontSize="xs" color={textColor} fontStyle="italic" ml={1}>
         <Flex align="center" gap={1}>
-          <Icon as={FaChevronDown} boxSize={3} />
-          <Text>Click items to expand details</Text>
+          <Icon as={FaChevronDown} boxSize={2} />
+          <Text fontSize="xs">Click items to expand</Text>
         </Flex>
       </Box>
       
-      <VStack gap={4} align="stretch" mb={6}>
+      <VStack gap={1.5} align="stretch" mb={4}>
         {items.map((item, index) => (
           <TimelineItemComponent
             key={index}

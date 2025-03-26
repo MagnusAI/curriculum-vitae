@@ -167,40 +167,43 @@ function App() {
   return (
     <Layout>
       {/* Profile Section */}
-      <Box mb={8}>
+      <Box mb={4}>
         <Profile {...profileData} />
       </Box>
 
-      <Divider mb={8} />
+      <Divider mb={4} />
       
       {/* Main Content Grid Layout */}
       <Grid 
-        templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
-        gap={{ base: 8, lg: 10 }}
-        mb={8}
+        templateColumns={{ base: "1fr", md: "1fr", lg: "3fr 1fr" }}
+        gap={{ base: 4, md: 5, lg: 6 }}
+        mb={6}
+        width="100%"
+        maxW="100%"
+        overflow="hidden"
       >
         {/* Left Column: Summary and Timelines */}
-        <GridItem>
-          <Grid gap={8}>
-            <GridItem>
+        <GridItem width="100%" overflow="hidden">
+          <Grid gap={{ base: 4, md: 5 }} width="100%">
+            <GridItem width="100%" overflow="hidden">
               <Summary content={summary} />
             </GridItem>
-            <GridItem>
+            <GridItem width="100%" overflow="hidden">
               <Timeline items={workExperience} title="Work Experience" type="work" />
             </GridItem>
-            <GridItem>
+            <GridItem width="100%" overflow="hidden">
               <Timeline items={education} title="Education" type="education" />
             </GridItem>
           </Grid>
         </GridItem>
         
         {/* Right Column: Skills */}
-        <GridItem>
+        <GridItem width="100%" overflow="hidden">
           <Skills categories={skillCategories} />
         </GridItem>
       </Grid>
 
-      <Divider mb={8} />
+      <Divider mb={4} />
 
       {/* Call to Action Section */}
       <Box textAlign="center">
@@ -208,7 +211,7 @@ function App() {
           label="Download Full Resume" 
           icon="download"
           variant="primary"
-          size="lg"
+          size="md"
         />
       </Box>
     </Layout>
