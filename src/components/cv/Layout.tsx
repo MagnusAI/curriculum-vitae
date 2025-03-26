@@ -20,26 +20,26 @@ export function Layout({ children }: LayoutProps) {
   return (
     <Box bg={bgColor} minH="100vh" py={6}>
       <Container
-        maxW={{ 
-          base: "100%", 
-          sm: "100%", 
-          md: "container.md", 
+        maxW={{
+          base: "100%",
+          sm: "100%",
+          md: "container.md",
           lg: "container.lg",
-          xl: "container.xl", 
-          "2xl": "8xl" 
-        }} 
+          xl: "container.xl",
+          "2xl": "8xl"
+        }}
         px={{ base: 2, sm: 4, md: 6, lg: 8 }}
       >
         {/* Header with Dark Mode Toggle */}
         <Flex justifyContent="flex-end" mb={3}>
           <ColorModeButton />
         </Flex>
-        
+
         {/* Main Card */}
-        <Box 
-          bg={cardBgColor} 
-          borderRadius="lg" 
-          boxShadow="md" 
+        <Box
+          bg={cardBgColor}
+          borderRadius="lg"
+          boxShadow="md"
           p={{ base: 3, sm: 4, md: 6, lg: 8 }}
           border="1px"
           borderColor={borderColor}
@@ -49,7 +49,7 @@ export function Layout({ children }: LayoutProps) {
         >
           {children}
         </Box>
-        
+
         <Text textAlign="center" fontSize="xs" color={textColor} mt={4}>
           © {new Date().getFullYear()} Magnus Arnild - Built with React and Chakra UI
         </Text>

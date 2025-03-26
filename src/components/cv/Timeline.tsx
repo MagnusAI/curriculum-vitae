@@ -4,17 +4,12 @@ import {
   Flex,
   Text,
   VStack,
-  HStack,
-  Badge,
   Icon,
-  useBreakpointValue,
-  Grid,
-  GridItem
+  useBreakpointValue
 } from '@chakra-ui/react'
 import { useColorModeValue } from '../ui/color-mode'
-import { FaBriefcase, FaGraduationCap, FaCalendarAlt, FaMapMarkerAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { useState } from 'react'
-import React from 'react'
 
 export interface TimelineItem {
   title: string;
@@ -33,7 +28,7 @@ interface TimelineProps {
 }
 
 // Individual timeline item component with expand/collapse functionality
-function TimelineItemComponent({ item, index, isLast, accentColor, timelinePadding, headingColor, textColor, borderColor, bgColor, timelineMarkerOffset, timelineMarkerSize }: {
+function TimelineItemComponent({ item, isLast, accentColor, timelinePadding, headingColor, textColor, borderColor, bgColor, timelineMarkerOffset, timelineMarkerSize }: {
   item: TimelineItem;
   index: number;
   isLast: boolean;
@@ -47,20 +42,20 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
   timelineMarkerSize: number | undefined;
 }) {
   const [isExpanded, setIsExpanded] = useState(item.defaultExpanded || false);
-  
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
   // Height of timeline marker
   const markerSize = timelineMarkerSize || 8;
-  
+
   // Check if title contains "Part-Time" and remove it from the displayed title
   const isPartTime = item.title.includes("Part-Time") || item.title.includes("Part-time") || item.title.includes("part-time");
   const displayTitle = item.title.replace(/(Part-Time|Part-time|part-time)/g, "").trim();
 
   return (
-    <Box 
+    <Box
       position="relative"
       borderLeft="2px solid"
       borderColor={accentColor}
@@ -80,7 +75,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
         zIndex: 1
       }}
     >
-      <Box 
+      <Box
         bg={bgColor}
         borderRadius="md"
         borderWidth="1px"
@@ -100,29 +95,29 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
           {/* Main header - always visible */}
           <Flex direction="column" gap={0.5}>
             {/* Title */}
-            <Flex 
-              justify="space-between" 
+            <Flex
+              justify="space-between"
               align="flex-start"
               textAlign="left"
               w="full"
               flexDirection={{ base: "column", sm: "row" }}
               gap={{ base: 0.5, sm: 0 }}
             >
-              <Box 
+              <Box
                 maxW={{ base: "100%", sm: "65%" }}
                 display="flex"
                 alignItems="center"
                 mb={{ base: 0.5, sm: 0 }}
               >
-                <Icon 
-                  as={item.type === 'work' ? FaBriefcase : FaGraduationCap} 
-                  color={accentColor} 
+                <Icon
+                  as={item.type === 'work' ? FaBriefcase : FaGraduationCap}
+                  color={accentColor}
                   boxSize={2.5}
                   flexShrink={0}
                   mr={1}
                 />
-                <Text 
-                  fontWeight="bold" 
+                <Text
+                  fontWeight="bold"
                   fontSize={{ base: "2xs", sm: "xs" }}
                   color={headingColor}
                   lineHeight="short"
@@ -131,44 +126,44 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
                   {displayTitle}
                 </Text>
               </Box>
-              
-              <Flex 
-                align="center" 
-                gap={1} 
+
+              <Flex
+                align="center"
+                gap={1}
                 mt={{ base: 0, sm: 0.5 }}
                 alignSelf={{ base: "flex-start", sm: "flex-start" }}
                 ml={{ base: 3.5, sm: 0 }}
               >
-                <Text 
+                <Text
                   fontSize={{ base: "3xs", sm: "2xs" }}
-                  color={textColor} 
+                  color={textColor}
                   fontWeight="medium"
                   whiteSpace="nowrap"
                 >
                   {item.period}
                 </Text>
-                <Icon 
-                  as={isExpanded ? FaChevronUp : FaChevronDown} 
-                  boxSize={{ base: 2.5, sm: 3 }} 
+                <Icon
+                  as={isExpanded ? FaChevronUp : FaChevronDown}
+                  boxSize={{ base: 2.5, sm: 3 }}
                   color={accentColor}
                 />
               </Flex>
             </Flex>
-            
+
             {/* Organization & Location */}
-            <Flex 
-              justify="space-between" 
+            <Flex
+              justify="space-between"
               align={{ base: "flex-start", sm: "center" }}
               w="full"
               flexDirection={{ base: "column", sm: "row" }}
               gap={{ base: 0.5, sm: 0 }}
             >
-              <Flex 
+              <Flex
                 alignItems={{ base: "center", sm: "center" }}
                 flexWrap="wrap"
                 gap={1}
               >
-                <Text 
+                <Text
                   fontSize={{ base: "3xs", sm: "2xs" }}
                   color={headingColor}
                   wordBreak="break-word"
@@ -177,7 +172,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
                 >
                   {item.organization}
                 </Text>
-                
+
                 {/* Part-Time Text - same size as organization name */}
                 {isPartTime && (
                   <Box
@@ -196,16 +191,16 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
                   </Box>
                 )}
               </Flex>
-              
-              <Flex 
-                align="center" 
+
+              <Flex
+                align="center"
                 gap={1}
                 ml={{ base: 0, sm: 0 }}
                 alignSelf={{ base: "flex-start", sm: "flex-end" }}
               >
                 <Icon as={FaMapMarkerAlt} color={textColor} boxSize={2} />
-                <Text 
-                  fontSize={{ base: "3xs", sm: "2xs" }} 
+                <Text
+                  fontSize={{ base: "3xs", sm: "2xs" }}
                   color={textColor}
                   whiteSpace="nowrap"
                 >
@@ -214,10 +209,10 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
               </Flex>
             </Flex>
           </Flex>
-          
+
           {/* Expandable content */}
           {isExpanded && item.description && (
-            <Box 
+            <Box
               mt={2}
               pt={1.5}
               borderTopWidth="1px"
@@ -228,7 +223,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
                 {item.description.map((desc, i) => (
                   <Flex key={i} align="flex-start" gap={1.5}>
                     <Text as="span" color={accentColor} fontSize="xs" lineHeight="tall" mt={0.5}>•</Text>
-                    <Text 
+                    <Text
                       fontSize="xs"
                       color={textColor}
                       lineHeight="tall"
@@ -251,10 +246,10 @@ export function Timeline({ items, title, type }: TimelineProps) {
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const bgColor = useColorModeValue('white', 'gray.800')
-  const accentColor = type === 'work' 
+  const accentColor = type === 'work'
     ? useColorModeValue('blue.500', 'blue.300')
     : useColorModeValue('purple.500', 'purple.300')
-  
+
   // Responsive spacing adjustments - extra compact
   const timelinePadding = useBreakpointValue({ base: 2.5, md: 4 })
   const timelineMarkerSize = useBreakpointValue({ base: 6, md: 8 })
@@ -262,8 +257,8 @@ export function Timeline({ items, title, type }: TimelineProps) {
 
   return (
     <Box>
-      <Heading 
-        as="h2" 
+      <Heading
+        as="h2"
         size="sm"
         mb={1.5}
         color={headingColor}
@@ -278,14 +273,14 @@ export function Timeline({ items, title, type }: TimelineProps) {
         />
         {title}
       </Heading>
-      
+
       <Box mb={1} fontSize="xs" color={textColor} fontStyle="italic" ml={1}>
         <Flex align="center" gap={1}>
           <Icon as={FaChevronDown} boxSize={2} />
           <Text fontSize="xs">Click items to expand</Text>
         </Flex>
       </Box>
-      
+
       <VStack gap={1.5} align="stretch" mb={4}>
         {items.map((item, index) => (
           <TimelineItemComponent

@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box, Container } from '@chakra-ui/react'
+import { Grid, GridItem, Box } from '@chakra-ui/react'
 import { Divider } from './components/ui/Divider'
 import {
   Layout,
@@ -172,9 +172,9 @@ function App() {
       </Box>
 
       <Divider mb={4} />
-      
+
       {/* Main Content Grid Layout */}
-      <Grid 
+      <Grid
         templateColumns={{ base: "1fr", md: "1fr", lg: "3fr 1fr" }}
         gap={{ base: 4, md: 5, lg: 6 }}
         mb={6}
@@ -196,7 +196,7 @@ function App() {
             </GridItem>
           </Grid>
         </GridItem>
-        
+
         {/* Right Column: Skills */}
         <GridItem width="100%" overflow="hidden">
           <Skills categories={skillCategories} />
@@ -207,8 +207,8 @@ function App() {
 
       {/* Call to Action Section */}
       <Box textAlign="center">
-        <CallToAction 
-          label="Download Full Resume" 
+        <CallToAction
+          label="Download Full Resume"
           icon="download"
           variant="primary"
           size="md"

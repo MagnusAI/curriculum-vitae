@@ -29,13 +29,13 @@ export function Projects({ projects }: ProjectsProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const bgColor = useColorModeValue('white', 'gray.800')
   const hoverBgColor = useColorModeValue('gray.50', 'gray.700')
-  
+
   return (
     <Box>
-      <Heading 
-        as="h2" 
-        size="md" 
-        mb={4} 
+      <Heading
+        as="h2"
+        size="md"
+        mb={4}
         color={headingColor}
         display="flex"
         alignItems="center"
@@ -49,21 +49,21 @@ export function Projects({ projects }: ProjectsProps) {
         />
         Featured Projects
       </Heading>
-      
-      <Grid 
-        templateColumns={{ 
-          base: "1fr", 
-          xl: "1fr 1fr" 
+
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          xl: "1fr 1fr"
         }}
         gap={4}
       >
         {projects.map((project, index) => (
           <GridItem key={index}>
-            <Box 
-              p={4} 
-              borderWidth="1px" 
-              borderRadius="md" 
-              borderColor={borderColor} 
+            <Box
+              p={4}
+              borderWidth="1px"
+              borderRadius="md"
+              borderColor={borderColor}
               h="100%"
               bg={bgColor}
               transition="all 0.2s ease"
@@ -75,10 +75,10 @@ export function Projects({ projects }: ProjectsProps) {
               }}
             >
               <Flex justify="space-between" align="flex-start" mb={2}>
-                <Heading 
-                  as="h3" 
-                  size="sm" 
-                  mb={2} 
+                <Heading
+                  as="h3"
+                  size="sm"
+                  mb={2}
                   color={headingColor}
                   display="flex"
                   alignItems="center"
@@ -87,10 +87,10 @@ export function Projects({ projects }: ProjectsProps) {
                   <Icon as={FaBriefcase} color="green.500" boxSize={4} />
                   {project.title}
                 </Heading>
-                
+
                 {project.link && (
-                  <Link 
-                    href={project.link} 
+                  <Link
+                    href={project.link}
                     color="blue.500"
                     _hover={{ color: 'blue.600' }}
                     target="_blank"
@@ -100,21 +100,21 @@ export function Projects({ projects }: ProjectsProps) {
                   </Link>
                 )}
               </Flex>
-              
-              <Text 
-                color={textColor} 
+
+              <Text
+                color={textColor}
                 fontSize="sm"
                 mb={4}
                 lineHeight="tall"
               >
                 {project.description}
               </Text>
-              
+
               {project.techStack && (
                 <Flex mt={3} flexWrap="wrap" gap={2}>
                   {project.techStack.map((tech, techIndex) => (
-                    <Badge 
-                      key={techIndex} 
+                    <Badge
+                      key={techIndex}
                       colorScheme="gray"
                       variant="subtle"
                       fontSize="xs"

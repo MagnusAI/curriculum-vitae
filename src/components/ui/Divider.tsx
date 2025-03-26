@@ -8,13 +8,13 @@ interface DividerProps {
 
 export function Divider({ my = 6, mb }: DividerProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
-  
+
   return (
-    <Box 
-      h="1px" 
-      bg={borderColor} 
-      my={mb ? undefined : my} 
-      mb={mb} 
+    <Box
+      h="1px"
+      bg={borderColor}
+      my={mb ? undefined : my}
+      mb={mb}
     />
   )
 } 

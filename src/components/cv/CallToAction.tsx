@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, Box } from '@chakra-ui/react'
+import { Button, Flex, Icon } from '@chakra-ui/react'
 import { useColorModeValue } from '../ui/color-mode'
 import { FaArrowRight, FaDownload, FaEnvelope } from 'react-icons/fa'
 
@@ -23,19 +23,19 @@ export function CallToAction({
     'linear(to-r, blue.400, blue.600)',
     'linear(to-r, blue.300, blue.500)'
   )
-  
+
   const iconMap = {
     arrow: FaArrowRight,
     download: FaDownload,
     email: FaEnvelope,
     none: null
   }
-  
+
   const IconComponent = icon !== 'none' ? iconMap[icon] : null
-  
+
   return (
     <Flex justify="center">
-      <Button 
+      <Button
         colorScheme={variant === 'primary' ? undefined : colorScheme}
         size={size}
         onClick={onClick}

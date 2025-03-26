@@ -27,7 +27,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const bgColor = useColorModeValue('gray.50', 'gray.800')
-  
+
   // Responsive layout adjustments
   const imageSize = useBreakpointValue({
     base: '140px',
@@ -35,10 +35,10 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
     md: '180px',
     xl: '220px'
   })
-  
+
   // Image preview state
   const [showFullImage, setShowFullImage] = useState(false)
-  
+
   const openFullImage = () => setShowFullImage(true)
   const closeFullImage = () => setShowFullImage(false)
 
@@ -75,7 +75,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
           objectFit="cover"
           objectPosition="center 20%"
         />
-        
+
         {/* Overlay with zoom icon on hover */}
         <Box
           position="absolute"
@@ -96,42 +96,42 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
       </Box>
 
       {/* Profile Info Section */}
-      <Stack 
-        align={{ base: 'center', md: 'flex-start' }} 
-        gap={{ base: 3, md: 4 }} 
-        w="100%" 
+      <Stack
+        align={{ base: 'center', md: 'flex-start' }}
+        gap={{ base: 3, md: 4 }}
+        w="100%"
         flex="1"
       >
         {/* Name & Title */}
         <Stack gap={2} align={{ base: 'center', md: 'flex-start' }}>
-          <Heading 
-            as="h1" 
-            size={{ base: 'lg', md: 'xl', lg: '2xl' }} 
+          <Heading
+            as="h1"
+            size={{ base: 'lg', md: 'xl', lg: '2xl' }}
             color={headingColor}
             lineHeight="1.2"
           >
             {name}
           </Heading>
-          
-          <Flex 
+
+          <Flex
             align={{ base: 'center', md: 'flex-start' }}
             flexDirection="column"
-            gap={2} 
+            gap={2}
             wrap="wrap"
             justify={{ base: 'center', md: 'flex-start' }}
           >
-            <Text 
-              fontSize={{ base: 'md', md: 'lg', lg: 'xl' }} 
-              fontWeight="medium" 
+            <Text
+              fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+              fontWeight="medium"
               color={headingColor}
             >
               {title}
             </Text>
-            
-            <Badge 
-              colorScheme="blue" 
-              fontSize={{ base: 'xs', md: 'sm' }} 
-              px={2} 
+
+            <Badge
+              colorScheme="blue"
+              fontSize={{ base: 'xs', md: 'sm' }}
+              px={2}
               py={0.5}
             >
               <Flex align="center" gap={1}>
@@ -141,10 +141,10 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
             </Badge>
           </Flex>
         </Stack>
-        
+
         {/* Bio */}
-        <Text 
-          color={textColor} 
+        <Text
+          color={textColor}
           fontSize={{ base: 'sm', md: 'md' }}
           textAlign={{ base: 'center', md: 'left' }}
           maxW={{ base: '100%', md: '90%' }}
@@ -154,12 +154,12 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
         </Text>
 
         {/* Action Buttons */}
-        <HStack 
-          gap={{ base: 2, md: 4 }} 
-          mt={{ base: 2, md: 3 }} 
-          w="100%" 
-          display="flex" 
-          flexWrap="wrap" 
+        <HStack
+          gap={{ base: 2, md: 4 }}
+          mt={{ base: 2, md: 3 }}
+          w="100%"
+          display="flex"
+          flexWrap="wrap"
           justifyContent={{ base: 'center', md: 'flex-start' }}
         >
           <Button
@@ -200,7 +200,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
           </Button>
         </HStack>
       </Stack>
-      
+
       {/* Full-size image modal */}
       {showFullImage && (
         <Box
@@ -225,7 +225,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
             bg="blackAlpha.700"
             backdropFilter="blur(10px)"
           />
-          
+
           {/* Image container */}
           <Box
             position="relative"
@@ -245,7 +245,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
               objectFit="contain"
               bg="black"
             />
-            
+
             {/* Close button */}
             <Box
               position="absolute"
