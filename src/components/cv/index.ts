@@ -1,6 +1,8 @@
-export * from './CallToAction'
-export * from './Layout'
-export * from './Profile'
-export * from './Projects'
-export * from './Skills'
-export * from './Summary' 
+export { Layout } from './Layout';
+export { Profile } from './Profile';
+export { Summary } from './Summary';
+export { Skills } from './Skills';
+export { Projects } from './Projects';
+export { CallToAction } from './CallToAction';
+export { Timeline } from './Timeline';
+export type { TimelineItem } from './Timeline'; 

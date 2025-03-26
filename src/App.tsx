@@ -5,9 +5,9 @@ import {
   Profile,
   Summary,
   Skills,
-  Projects,
   CallToAction
 } from './components/cv'
+import { Timeline, TimelineItem } from './components/cv/Timeline'
 import './App.css'
 import profileImage from './assets/profile_image.png'
 
@@ -52,27 +52,115 @@ function App() {
   // Summary data
   const summary = "Software Engineer with experience in financial services and fullstack development. Skilled in building scalable, cloud-native applications using modern technologies such as Java, TypeScript, and AWS. Adept in both frontend and backend development"
 
-  // Projects data
-  const projects = [
+  // Work experience data
+  const workExperience: TimelineItem[] = [
     {
-      title: "E-commerce Platform",
-      description: "A full-featured online store built with React and Node.js, featuring user authentication, product catalog, shopping cart, and payment processing.",
-      techStack: ['React', 'Node.js', 'MongoDB', 'Express', 'Stripe']
+      title: "Software Engineer",
+      organization: "Kompasbank",
+      location: "Denmark",
+      period: "August 2023 – Present",
+      description: [
+        "Designed and maintained automation systems for financial services in collaboration with internal departments.",
+        "Built internal tools to enhance operational efficiency.",
+        "Developed and maintained banking applications with a focus on performance and scalability."
+      ],
+      type: "work",
+      defaultExpanded: true
     },
     {
-      title: "Task Management App",
-      description: "A productivity tool designed to help users organize tasks, set priorities, and track progress using drag-and-drop features and real-time updates.",
-      techStack: ['TypeScript', 'React', 'Firebase', 'Material UI']
+      title: "Part-time Software Engineer",
+      organization: "Kompasbank",
+      location: "Denmark",
+      period: "April 2022 – July 2023",
+      description: [
+        "Developed and maintained banking applications with a focus on performance and scalability."
+      ],
+      type: "work"
     },
     {
-      title: "Financial Dashboard",
-      description: "An interactive dashboard for visualizing financial data with custom charts, filters, and exports. Integrates with multiple financial APIs.",
-      techStack: ['React', 'D3.js', 'Redux', 'Node.js', 'PostgreSQL']
+      title: "Software Developer",
+      organization: "Siteimprove",
+      location: "Copenhagen, Denmark",
+      period: "July 2020 – April 2022",
+      description: [
+        "Developed internal tools to support team workflows and optimize runtime efficiency.",
+        "Created client-facing applications for visualizing internal processes and service runtimes.",
+        "Contributed to core product development with emphasis on maintainability and performance.",
+        "Enhanced frontend user experience through design and performance improvements."
+      ],
+      type: "work"
     },
     {
-      title: "Mobile Fitness Tracker",
-      description: "A cross-platform mobile app that tracks workouts, nutrition, and progress with personalized recommendations and social features.",
-      techStack: ['React Native', 'GraphQL', 'AWS Amplify', 'Expo']
+      title: "Part-Time Software Developer",
+      organization: "Siteimprove",
+      location: "Copenhagen, Denmark",
+      period: "July 2019 – June 2020",
+      description: [
+        "Contributed to core product development with emphasis on maintainability and performance.",
+        "Enhanced frontend user experience through design and performance improvements."
+      ],
+      type: "work"
+    },
+    {
+      title: "IT Technician",
+      organization: "Otto Suenson A/S",
+      location: "Gentofte",
+      period: "August 2017 – June 2019",
+      description: [
+        "Provided IT support and implemented infrastructure updates across departments."
+      ],
+      type: "work"
+    },
+    {
+      title: "Logistics and Distribution",
+      organization: "Otto Suenson A/S",
+      location: "Gentofte",
+      period: "August 2015 – August 2017",
+      description: [
+        "Coordinated logistics and managed inventory systems.",
+        "Delivered orders to private customers and restaurants within the region."
+      ],
+      type: "work"
+    }
+  ]
+
+  // Education data
+  const education: TimelineItem[] = [
+    {
+      title: "Master of Science (MSc), Computer Science",
+      organization: "IT-Universitetet i København",
+      location: "Copenhagen, Denmark",
+      period: "September 2021 – June 2023",
+      type: "education",
+      defaultExpanded: true
+    },
+    {
+      title: "Bachelor of Science (BSc), Computer Software Engineering",
+      organization: "IT-Universitetet i København",
+      location: "Copenhagen, Denmark",
+      period: "September 2017 – June 2020",
+      type: "education"
+    },
+    {
+      title: "Matematik A",
+      organization: "Københavns VUC",
+      location: "Copenhagen, Denmark",
+      period: "May 2016",
+      type: "education"
+    },
+    {
+      title: "Bachelor's Degree, HA almen",
+      organization: "Copenhagen Business School",
+      location: "Copenhagen, Denmark",
+      period: "September 2014 – August 2015",
+      type: "education"
+    },
+    {
+      title: "High School, Højere handelseksamen i Afsætning og Virksomhedsøkonomi",
+      organization: "HHX Hillerød København Nord",
+      location: "Hillerød, Denmark",
+      period: "August 2010 – June 2013",
+      type: "education"
     }
   ]
 
@@ -91,14 +179,17 @@ function App() {
         gap={{ base: 8, lg: 10 }}
         mb={8}
       >
-        {/* Left Column: Summary and Projects */}
+        {/* Left Column: Summary and Timelines */}
         <GridItem>
           <Grid gap={8}>
             <GridItem>
               <Summary content={summary} />
             </GridItem>
             <GridItem>
-              <Projects projects={projects} />
+              <Timeline items={workExperience} title="Work Experience" type="work" />
+            </GridItem>
+            <GridItem>
+              <Timeline items={education} title="Education" type="education" />
             </GridItem>
           </Grid>
         </GridItem>

@@ -136,7 +136,7 @@ export function Profile({ name, title, bio, imageUrl }: ProfileProps) {
             >
               <Flex align="center" gap={1}>
                 <Icon as={FaMapMarkerAlt} boxSize={3} />
-                <Text>3480 Fredensborg, Denmark</Text>
+                <Text>Fredensborg, Denmark</Text>
               </Flex>
             </Badge>
           </Flex>
