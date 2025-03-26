@@ -54,6 +54,10 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
 
   // Height of timeline marker
   const markerSize = timelineMarkerSize || 8;
+  
+  // Check if title contains "Part-Time" and remove it from the displayed title
+  const isPartTime = item.title.includes("Part-Time") || item.title.includes("Part-time") || item.title.includes("part-time");
+  const displayTitle = item.title.replace(/(Part-Time|Part-time|part-time)/g, "").trim();
 
   return (
     <Box 
@@ -99,6 +103,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
             <Flex 
               justify="space-between" 
               align="flex-start"
+              textAlign="left"
               w="full"
               flexDirection={{ base: "column", sm: "row" }}
               gap={{ base: 0.5, sm: 0 }}
@@ -123,7 +128,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
                   lineHeight="short"
                   wordBreak="break-word"
                 >
-                  {item.title}
+                  {displayTitle}
                 </Text>
               </Box>
               
@@ -158,17 +163,39 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
               flexDirection={{ base: "column", sm: "row" }}
               gap={{ base: 0.5, sm: 0 }}
             >
-              <Text 
-                fontSize={{ base: "3xs", sm: "2xs" }}
-                color={headingColor}
-                maxW={{ base: "100%", sm: "60%" }}
-                pr={1}
-                wordBreak="break-word"
-                lineHeight="shorter"
-                mb={{ base: 0.5, sm: 0 }}
+              <Flex 
+                alignItems={{ base: "center", sm: "center" }}
+                flexWrap="wrap"
+                gap={1}
               >
-                {item.organization}
-              </Text>
+                <Text 
+                  fontSize={{ base: "3xs", sm: "2xs" }}
+                  color={headingColor}
+                  wordBreak="break-word"
+                  lineHeight="shorter"
+                  mb={{ base: 0, sm: 0 }}
+                >
+                  {item.organization}
+                </Text>
+                
+                {/* Part-Time Text - same size as organization name */}
+                {isPartTime && (
+                  <Box
+                    fontSize={{ base: "3xs", sm: "2xs" }}
+                    color={textColor}
+                    opacity={0.8}
+                    display="inline-block"
+                    borderWidth="0.5px"
+                    borderColor={textColor}
+                    borderRadius="sm"
+                    px={1}
+                    ml={0.5}
+                    lineHeight="shorter"
+                  >
+                    part-time
+                  </Box>
+                )}
+              </Flex>
               
               <Flex 
                 align="center" 
@@ -195,6 +222,7 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
               pt={1.5}
               borderTopWidth="1px"
               borderTopColor={borderColor}
+              textAlign="left"
             >
               <VStack align="stretch" gap={1}>
                 {item.description.map((desc, i) => (
