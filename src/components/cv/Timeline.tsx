@@ -98,37 +98,53 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
             {/* Title */}
             <Flex 
               justify="space-between" 
-              align="center"
+              align="flex-start"
               w="full"
+              flexDirection={{ base: "column", sm: "row" }}
+              gap={{ base: 0.5, sm: 0 }}
             >
-              <Text 
-                fontWeight="bold" 
-                fontSize="sm" 
-                color={headingColor}
-                maxW="70%"
-                textOverflow="ellipsis" 
-                overflow="hidden" 
-                whiteSpace="nowrap"
+              <Box 
+                maxW={{ base: "100%", sm: "65%" }}
                 display="flex"
                 alignItems="center"
-                gap={1.5}
+                mb={{ base: 0.5, sm: 0 }}
               >
                 <Icon 
                   as={item.type === 'work' ? FaBriefcase : FaGraduationCap} 
                   color={accentColor} 
                   boxSize={2.5}
                   flexShrink={0}
+                  mr={1}
                 />
-                {item.title}
-              </Text>
+                <Text 
+                  fontWeight="bold" 
+                  fontSize={{ base: "2xs", sm: "xs" }}
+                  color={headingColor}
+                  lineHeight="short"
+                  wordBreak="break-word"
+                >
+                  {item.title}
+                </Text>
+              </Box>
               
-              <Flex align="center" gap={1.5}>
-                <Text fontSize="xs" color={textColor} fontWeight="medium">
+              <Flex 
+                align="center" 
+                gap={1} 
+                mt={{ base: 0, sm: 0.5 }}
+                alignSelf={{ base: "flex-start", sm: "flex-start" }}
+                ml={{ base: 3.5, sm: 0 }}
+              >
+                <Text 
+                  fontSize={{ base: "3xs", sm: "2xs" }}
+                  color={textColor} 
+                  fontWeight="medium"
+                  whiteSpace="nowrap"
+                >
                   {item.period}
                 </Text>
                 <Icon 
                   as={isExpanded ? FaChevronUp : FaChevronDown} 
-                  boxSize={3} 
+                  boxSize={{ base: 2.5, sm: 3 }} 
                   color={accentColor}
                 />
               </Flex>
@@ -137,23 +153,35 @@ function TimelineItemComponent({ item, index, isLast, accentColor, timelinePaddi
             {/* Organization & Location */}
             <Flex 
               justify="space-between" 
-              align="center"
+              align={{ base: "flex-start", sm: "center" }}
               w="full"
+              flexDirection={{ base: "column", sm: "row" }}
+              gap={{ base: 0.5, sm: 0 }}
             >
               <Text 
-                fontSize="xs"
+                fontSize={{ base: "3xs", sm: "2xs" }}
                 color={headingColor}
-                maxW="60%"
-                textOverflow="ellipsis" 
-                overflow="hidden" 
-                whiteSpace="nowrap"
+                maxW={{ base: "100%", sm: "60%" }}
+                pr={1}
+                wordBreak="break-word"
+                lineHeight="shorter"
+                mb={{ base: 0.5, sm: 0 }}
               >
                 {item.organization}
               </Text>
               
-              <Flex align="center" gap={1}>
+              <Flex 
+                align="center" 
+                gap={1}
+                ml={{ base: 0, sm: 0 }}
+                alignSelf={{ base: "flex-start", sm: "flex-end" }}
+              >
                 <Icon as={FaMapMarkerAlt} color={textColor} boxSize={2} />
-                <Text fontSize="xs" color={textColor}>
+                <Text 
+                  fontSize={{ base: "3xs", sm: "2xs" }} 
+                  color={textColor}
+                  whiteSpace="nowrap"
+                >
                   {item.location}
                 </Text>
               </Flex>
