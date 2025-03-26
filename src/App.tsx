@@ -1,4 +1,4 @@
-import { Stack } from '@chakra-ui/react'
+import { Grid, GridItem, Box, Container } from '@chakra-ui/react'
 import { Divider } from './components/ui/Divider'
 import {
   Layout,
@@ -56,32 +56,70 @@ function App() {
   const projects = [
     {
       title: "E-commerce Platform",
-      description: "A full-featured online store built with React and Node.js, featuring user authentication, product catalog, shopping cart, and payment processing."
+      description: "A full-featured online store built with React and Node.js, featuring user authentication, product catalog, shopping cart, and payment processing.",
+      techStack: ['React', 'Node.js', 'MongoDB', 'Express', 'Stripe']
     },
     {
       title: "Task Management App",
-      description: "A productivity tool designed to help users organize tasks, set priorities, and track progress using drag-and-drop features and real-time updates."
+      description: "A productivity tool designed to help users organize tasks, set priorities, and track progress using drag-and-drop features and real-time updates.",
+      techStack: ['TypeScript', 'React', 'Firebase', 'Material UI']
+    },
+    {
+      title: "Financial Dashboard",
+      description: "An interactive dashboard for visualizing financial data with custom charts, filters, and exports. Integrates with multiple financial APIs.",
+      techStack: ['React', 'D3.js', 'Redux', 'Node.js', 'PostgreSQL']
+    },
+    {
+      title: "Mobile Fitness Tracker",
+      description: "A cross-platform mobile app that tracks workouts, nutrition, and progress with personalized recommendations and social features.",
+      techStack: ['React Native', 'GraphQL', 'AWS Amplify', 'Expo']
     }
   ]
 
   return (
     <Layout>
       {/* Profile Section */}
-      <Profile {...profileData} />
+      <Box mb={8}>
+        <Profile {...profileData} />
+      </Box>
 
-      <Divider />
+      <Divider mb={8} />
+      
+      {/* Main Content Grid Layout */}
+      <Grid 
+        templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
+        gap={{ base: 8, lg: 10 }}
+        mb={8}
+      >
+        {/* Left Column: Summary and Projects */}
+        <GridItem>
+          <Grid gap={8}>
+            <GridItem>
+              <Summary content={summary} />
+            </GridItem>
+            <GridItem>
+              <Projects projects={projects} />
+            </GridItem>
+          </Grid>
+        </GridItem>
+        
+        {/* Right Column: Skills */}
+        <GridItem>
+          <Skills categories={skillCategories} />
+        </GridItem>
+      </Grid>
 
-      {/* Content sections */}
-      <Stack gap={6}>
-        <Summary content={summary} />
-        <Skills categories={skillCategories} />
-        <Projects projects={projects} />
-      </Stack>
+      <Divider mb={8} />
 
-      <Divider />
-
-      {/* Footer with Call to Action */}
-      <CallToAction label="View Full Resume" />
+      {/* Call to Action Section */}
+      <Box textAlign="center">
+        <CallToAction 
+          label="Download Full Resume" 
+          icon="download"
+          variant="primary"
+          size="lg"
+        />
+      </Box>
     </Layout>
   )
 }
