@@ -5,7 +5,7 @@ import {
   Icon
 } from '@chakra-ui/react'
 import { FaQuoteLeft } from 'react-icons/fa'
-import { useColorModeValue } from '../ui/color-mode'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface SummaryProps {
   content: string;

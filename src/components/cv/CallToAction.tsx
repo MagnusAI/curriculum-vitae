@@ -1,6 +1,6 @@
 import { Button, Flex, Icon } from '@chakra-ui/react'
-import { useColorModeValue } from '../ui/color-mode'
 import { FaArrowRight, FaDownload, FaEnvelope } from 'react-icons/fa'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface CallToActionProps {
   label: string;

@@ -7,7 +7,7 @@ import {
   createToaster,
 } from "@chakra-ui/react"
 
-export const toaster = createToaster({
+const toasterStore = createToaster({
   placement: "bottom-end",
   pauseOnPageIdle: true,
 })
@@ -15,7 +15,7 @@ export const toaster = createToaster({
 export const Toaster = () => {
   return (
     <Portal>
-      <ChakraToaster toaster={toaster} insetInline={{ mdDown: "4" }}>
+      <ChakraToaster toaster={toasterStore} insetInline={{ mdDown: "4" }}>
         {(toast) => (
           <Toast.Root width={{ md: "sm" }}>
             {toast.type === "loading" ? (

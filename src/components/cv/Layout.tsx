@@ -4,8 +4,9 @@ import {
   Flex,
   Text
 } from '@chakra-ui/react'
-import { ColorModeButton, useColorModeValue } from '../ui/color-mode'
+import { ColorModeButton } from '../ui/color-mode'
 import { ReactNode } from 'react'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface LayoutProps {
   children: ReactNode;

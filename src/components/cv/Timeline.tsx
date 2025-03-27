@@ -7,9 +7,9 @@ import {
   Icon,
   useBreakpointValue
 } from '@chakra-ui/react'
-import { useColorModeValue } from '../ui/color-mode'
 import { FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { useState } from 'react'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 export interface TimelineItem {
   title: string;
@@ -246,9 +246,12 @@ export function Timeline({ items, title, type }: TimelineProps) {
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const bgColor = useColorModeValue('white', 'gray.800')
+  const accentColorWork = useColorModeValue('blue.500', 'blue.300');
+  const accentColorDefault = useColorModeValue('purple.500', 'purple.300');
+
   const accentColor = type === 'work'
-    ? useColorModeValue('blue.500', 'blue.300')
-    : useColorModeValue('purple.500', 'purple.300')
+    ? accentColorWork
+    : accentColorDefault
 
   // Responsive spacing adjustments - extra compact
   const timelinePadding = useBreakpointValue({ base: 2.5, md: 4 })

@@ -11,9 +11,9 @@ import {
   Badge,
   useBreakpointValue
 } from '@chakra-ui/react'
-import { useColorModeValue } from '../ui/color-mode'
 import { FaGithub, FaLinkedin, FaEnvelope, FaSearch, FaTimes, FaMapMarkerAlt } from 'react-icons/fa'
 import { useState } from 'react'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface ProfileProps {
   name: string;

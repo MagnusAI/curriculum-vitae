@@ -9,8 +9,8 @@ import {
   Icon,
   Link
 } from '@chakra-ui/react'
-import { useColorModeValue } from '../ui/color-mode'
 import { FaExternalLinkAlt, FaCode, FaBriefcase } from 'react-icons/fa'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface Project {
   title: string;
@@ -29,6 +29,8 @@ export function Projects({ projects }: ProjectsProps) {
   const borderColor = useColorModeValue('gray.200', 'gray.700')
   const bgColor = useColorModeValue('white', 'gray.800')
   const hoverBgColor = useColorModeValue('gray.50', 'gray.700')
+  const hoverBorderColor = useColorModeValue('blue.200', 'blue.500')
+  const barColor = useColorModeValue('green.500', 'green.300')
 
   return (
     <Box>
@@ -44,7 +46,7 @@ export function Projects({ projects }: ProjectsProps) {
         <Box
           w={1}
           h={6}
-          bg={useColorModeValue('green.500', 'green.300')}
+          bg={barColor}
           mr={1}
         />
         Featured Projects
@@ -71,7 +73,7 @@ export function Projects({ projects }: ProjectsProps) {
                 transform: 'translateY(-4px)',
                 boxShadow: 'md',
                 bg: hoverBgColor,
-                borderColor: useColorModeValue('blue.200', 'blue.500')
+                borderColor: hoverBorderColor
               }}
             >
               <Flex justify="space-between" align="flex-start" mb={2}>

@@ -78,7 +78,7 @@ function App() {
       type: "work"
     },
     {
-      title: "Software Developer",
+      title: "Software Engineer",
       organization: "Siteimprove",
       location: "Copenhagen, Denmark",
       period: "July 2020 – April 2022",
@@ -91,7 +91,7 @@ function App() {
       type: "work"
     },
     {
-      title: "Part-Time Software Developer",
+      title: "Part-Time Software Engineer",
       organization: "Siteimprove",
       location: "Copenhagen, Denmark",
       period: "July 2019 – June 2020",

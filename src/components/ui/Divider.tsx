@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { useColorModeValue } from './color-mode'
+import { useColorModeValue } from '../../hooks/color-mode-hooks';
 
 interface DividerProps {
   my?: number | string;
