@@ -2,7 +2,7 @@ import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { education } from '../data/education';
 import { hobbies } from '../data/hobbies';
 import { profileData, summary } from '../data/profile';
-import { skillCategories } from '../data/skills';
+import { gardenBeds, pottedPlants, rackTools } from '../data/skills';
 import { workExperience } from '../data/work-experience';
 import { TimelineItem } from '../data/types';
 
@@ -141,14 +141,26 @@ export function CvDocument() {
         ))}
 
         <Text style={styles.sectionTitle}>Skills</Text>
-        {skillCategories.map((category) => (
-          <View style={styles.skillCategory} key={category.name}>
+        {gardenBeds.map((bed) => (
+          <View style={styles.skillCategory} key={bed.name}>
             <Text>
-              <Text style={styles.skillName}>{category.name}: </Text>
-              {category.skills.join(', ')}
+              <Text style={styles.skillName}>{bed.name}: </Text>
+              {bed.skills.join(', ')}
             </Text>
           </View>
         ))}
+        <View style={styles.skillCategory}>
+          <Text>
+            <Text style={styles.skillName}>Ways of working: </Text>
+            {pottedPlants.map((plant) => plant.name).join(', ')}
+          </Text>
+        </View>
+        <View style={styles.skillCategory}>
+          <Text>
+            <Text style={styles.skillName}>Tools: </Text>
+            {rackTools.map((tool) => tool.name).join(', ')}
+          </Text>
+        </View>
 
         <Text style={styles.sectionTitle}>Hobbies</Text>
         {hobbies.map((hobby) => (

@@ -13,6 +13,7 @@ export const workExperience: TimelineItem[] = [
         "Developed and maintained banking applications with a focus on performance and scalability."
       ],
       type: "work",
+      sector: "finance",
       defaultExpanded: true
     },
     {
@@ -23,7 +24,8 @@ export const workExperience: TimelineItem[] = [
       description: [
         "Developed and maintained banking applications with a focus on performance and scalability."
       ],
-      type: "work"
+      type: "work",
+      sector: "finance"
     },
     {
       title: "Software Engineer",
@@ -36,7 +38,8 @@ export const workExperience: TimelineItem[] = [
         "Contributed to core product development with emphasis on maintainability and performance.",
         "Enhanced frontend user experience through design and performance improvements."
       ],
-      type: "work"
+      type: "work",
+      sector: "software"
     },
     {
       title: "Part-Time Software Engineer",
@@ -47,7 +50,8 @@ export const workExperience: TimelineItem[] = [
         "Contributed to core product development with emphasis on maintainability and performance.",
         "Enhanced frontend user experience through design and performance improvements."
       ],
-      type: "work"
+      type: "work",
+      sector: "software"
     },
     {
       title: "IT Technician",
@@ -57,7 +61,8 @@ export const workExperience: TimelineItem[] = [
       description: [
         "Provided IT support and implemented infrastructure updates across departments."
       ],
-      type: "work"
+      type: "work",
+      sector: "retail"
     },
     {
       title: "Logistics and Distribution",
@@ -68,6 +73,7 @@ export const workExperience: TimelineItem[] = [
         "Coordinated logistics and managed inventory systems.",
         "Delivered orders to private customers and restaurants within the region."
       ],
-      type: "work"
+      type: "work",
+      sector: "retail"
     }
   ]

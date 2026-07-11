@@ -1,7 +1,7 @@
 import { profileData, summary } from '../../data/profile';
-import { workExperience } from '../../data/work-experience';
-import { Hobby, TimelineItem } from '../../data/types';
+import { GardenBed, Hobby, PottedPlant, RackTool, TimelineItem } from '../../data/types';
 import { DialogContent } from '../events';
+import { tenureLabel, tenureMonths } from './tenure';
 
 const PART_TIME = /part[- ]?time\s*/i;
 
@@ -13,6 +13,13 @@ function isPartTime(item: TimelineItem): boolean {
   return PART_TIME.test(item.title);
 }
 
+const SECTOR_LABEL: Record<string, string> = {
+  finance: 'Finance 🌲',
+  software: 'Software 🌳',
+  retail: 'Retail 🍎',
+};
+
+// ---------------------------------------------------------------- education
 export function educationDialog(item: TimelineItem): DialogContent {
   return {
     title: item.title,
@@ -27,37 +34,89 @@ export function educationDialog(item: TimelineItem): DialogContent {
   };
 }
 
-export function skillsDialog(category: { name: string; skills: string[] }): DialogContent {
+// ------------------------------------------------------------------- career
+export function careerDialog(item: TimelineItem): DialogContent {
+  const months = tenureMonths(item.period);
+  const tenure = tenureLabel(months);
+  const metaBits = [item.location, item.period];
+  if (tenure) metaBits.push(tenure);
   return {
-    title: category.name,
-    subtitle: 'Skills',
-    icon: '🌾',
-    sections: [{ tags: category.skills }],
+    title: `${roleTitle(item)}${isPartTime(item) ? ' (part-time)' : ''}`,
+    subtitle: `${item.organization}${item.sector ? ` · ${SECTOR_LABEL[item.sector] ?? item.sector}` : ''}`,
+    icon: '💼',
+    sections: [
+      {
+        meta: metaBits.join(' · '),
+        lines: item.description,
+      },
+    ],
   };
 }
 
-export function hobbyDialog(hobby: Hobby): DialogContent {
+// -------------------------------------------------------------- skills yard
+const PROFICIENCY_LABEL: Record<number, string> = {
+  1: 'Sprouting — actively growing',
+  2: 'Growing well — solid and dependable',
+  3: 'Flourishing — home turf',
+};
+
+export function bedDialog(bed: GardenBed): DialogContent {
+  return {
+    title: bed.name,
+    subtitle: 'Raised garden bed · growth = proficiency',
+    icon: '🌱',
+    sections: [
+      {
+        meta: PROFICIENCY_LABEL[bed.proficiency],
+        tags: bed.skills,
+      },
+    ],
+  };
+}
+
+export function potDialog(plant: PottedPlant): DialogContent {
+  return {
+    title: plant.name,
+    subtitle: 'Potted plant · tended daily',
+    icon: '🪴',
+    sections: [{ lines: plant.note ? [plant.note] : undefined }],
+  };
+}
+
+const USAGE_LABEL: Record<number, string> = {
+  1: 'on the shelf',
+  2: 'well used',
+  3: 'worn smooth — daily driver',
+};
+
+export function toolRackDialog(tools: RackTool[]): DialogContent {
+  return {
+    title: 'The Tool Rack',
+    subtitle: 'Shinier handle = used more',
+    icon: '🛠️',
+    sections: [
+      {
+        lines: [...tools]
+          .sort((a, b) => b.usage - a.usage)
+          .map((tool) => `${tool.name} — ${USAGE_LABEL[tool.usage]}`),
+      },
+    ],
+  };
+}
+
+// ------------------------------------------------------------------ hobbies
+export function hobbyDialog(hobby: Hobby, extraLine?: string): DialogContent {
+  const lines = [hobby.description];
+  if (extraLine) lines.push(extraLine);
   return {
     title: hobby.name,
     subtitle: 'Hobby',
-    icon: '🐾',
-    sections: [{ lines: [hobby.description] }],
+    icon: hobby.spot === 'campsite' ? '🏕️' : hobby.spot === 'piano' ? '🎹' : '🖥️',
+    sections: [{ lines }],
   };
 }
 
-export function workDialog(): DialogContent {
-  return {
-    title: 'Work Experience',
-    subtitle: `${profileData.name} — ${profileData.title}`,
-    icon: '💻',
-    sections: workExperience.map((item) => ({
-      heading: `${roleTitle(item)} · ${item.organization}${isPartTime(item) ? ' (part-time)' : ''}`,
-      meta: `${item.location} · ${item.period}`,
-      lines: item.description,
-    })),
-  };
-}
-
+// ------------------------------------------------------------- world flavor
 export function mailboxDialog(): DialogContent {
   return {
     title: profileData.name,
@@ -90,22 +149,6 @@ export function wifeDialog(): DialogContent {
   };
 }
 
-export function pianoDialog(): DialogContent {
-  return {
-    title: 'The Piano',
-    subtitle: 'Music corner',
-    icon: '🎹',
-    sections: [
-      {
-        lines: [
-          'Magnus unwinds at the keys — mostly classical pieces, occasionally game soundtracks.',
-          'You just heard a few bars of Für Elise. He promises it sounds better in person.',
-        ],
-      },
-    ],
-  };
-}
-
 export function bookshelfDialog(): DialogContent {
   return {
     title: 'The Bookshelf',
@@ -122,15 +165,73 @@ export function bookshelfDialog(): DialogContent {
   };
 }
 
-export function skillsFieldSign(): DialogContent {
+// -------------------------------------------------- zone grammar legends
+export function welcomeDialog(): DialogContent {
   return {
-    title: 'Skill Fields',
-    subtitle: 'The crops of knowledge',
-    icon: '🌾',
+    title: 'Welcome, visitor!',
+    subtitle: "Magnus Arnild's world",
+    icon: '🗺️',
     sections: [
       {
         lines: [
-          'Each field grows a different crop of skills. Walk up to a row sign to inspect what’s planted.',
+          'You are controlling Magnus. Walk around and poke at things!',
+          '🏔️ North — Education Mountain: climb the trail',
+          '🌲 East — the Career Forest: one tree per job',
+          '🌱 South-west — the Skills Yard',
+          '🏕️ South-east — the campsite',
+          '🏠 And do step inside the house.',
+        ],
+      },
+    ],
+  };
+}
+
+export function mountainSignDialog(): DialogContent {
+  return {
+    title: 'Education Mountain',
+    subtitle: 'How to read this zone',
+    icon: '🏔️',
+    sections: [
+      {
+        lines: [
+          'Education is the foundation everything else stands on — so it gets a mountain.',
+          'The higher a checkpoint sits on the trail, the higher the education. The lookout tower at the summit marks the master’s degree.',
+          'Interact with each waymark, cabin and tower for the details.',
+        ],
+      },
+    ],
+  };
+}
+
+export function forestSignDialog(): DialogContent {
+  return {
+    title: 'Career Forest',
+    subtitle: 'How to read this zone',
+    icon: '🌲',
+    sections: [
+      {
+        lines: [
+          'One planted tree per job, oldest on the left — a timeline you can walk along.',
+          'Bigger tree = longer tenure (sapling → young → mature).',
+          'Species = industry: 🌲 pine is finance, 🌳 broadleaf is software, 🍎 fruit tree is retail.',
+          'The wild trees around them are just forest — the planted row follows the path.',
+        ],
+      },
+    ],
+  };
+}
+
+export function yardSignDialog(): DialogContent {
+  return {
+    title: 'Skills Yard',
+    subtitle: 'How to read this zone',
+    icon: '🌱',
+    sections: [
+      {
+        lines: [
+          'Raised beds are core skill areas — the fuller the bed grows, the stronger the proficiency.',
+          'Potted plants are softer skills, tended and still growing.',
+          'The tool rack holds concrete tools — the shinier the handle, the more it gets used.',
         ],
       },
     ],

@@ -11,6 +11,9 @@ export interface PropOptions {
   interactPrompt?: string;
   dialog?: DialogContent;
   onInteract?: () => void;
+  // Two-frame animation (e.g. campfire flicker).
+  altRegion?: PropRegion;
+  animFps?: number;
 }
 
 // A static world object drawn from the props atlas. Solidity and depth
@@ -27,6 +30,10 @@ export class Prop implements Entity {
   private dialog?: DialogContent;
   private onInteractFn?: () => void;
   interact?: (world: WorldApi) => void;
+  private altRegion?: PropRegion;
+  private animFps: number;
+  private animTime = 0;
+  update?: (dt: number) => void;
 
   constructor(
     private sheet: CanvasImageSource,
@@ -56,19 +63,30 @@ export class Prop implements Entity {
         if (this.dialog) world.events.emit({ type: 'openDialog', content: this.dialog });
       };
     }
+    this.altRegion = options.altRegion;
+    this.animFps = options.animFps ?? 4;
+    if (this.altRegion) {
+      this.update = (dt: number) => {
+        this.animTime += dt;
+      };
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D, camX: number, camY: number): void {
+    let region = this.region;
+    if (this.altRegion && Math.floor(this.animTime * this.animFps) % 2 === 1) {
+      region = this.altRegion;
+    }
     ctx.drawImage(
       this.sheet,
-      this.region.x,
-      this.region.y,
-      this.region.w,
-      this.region.h,
+      region.x,
+      region.y,
+      region.w,
+      region.h,
       Math.floor(this.spriteX - camX),
       Math.floor(this.spriteY - camY),
-      this.region.w,
-      this.region.h,
+      region.w,
+      region.h,
     );
   }
 }

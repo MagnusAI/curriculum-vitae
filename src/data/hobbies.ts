@@ -1,23 +1,23 @@
 import { Hobby } from "./types";
 
-// Hobby data — each hobby is represented by an animal in the game world
+// Hobby data — each hobby lives at a themed spot in the game world.
 export const hobbies: Hobby[] = [
+  {
+    name: "Hiking & Survival",
+    description:
+      "I love hiking and survival trips — sleeping in a tent, cooking over a fire, and spending real time outdoors away from screens.",
+    spot: "campsite",
+  },
   {
     name: "Music & Piano",
     description:
-      "Playing the piano is one of my favourite ways to unwind — you can hear it for yourself on the piano inside the house.",
-    animal: "chicken",
+      "Playing the piano is one of my favourite ways to unwind — mostly classical pieces, occasionally game soundtracks.",
+    spot: "piano",
   },
   {
     name: "Gaming & Tinkering",
     description:
-      "Video games and hobby programming projects — building small things for fun is how this very CV came to be.",
-    animal: "sheep",
-  },
-  {
-    name: "Dog Life",
-    description:
-      "Long walks with my Jack Russell terrier — the little fellow following you around right now.",
-    animal: "cow",
+      "Video games and hobby programming projects — building small things for fun is how this very pixel world came to be.",
+    spot: "desk",
   },
 ];
