@@ -1,4 +1,4 @@
-import { TimelineItem } from "../components/cv/Timeline";
+import { TimelineItem } from "./types";
 
   // Education data
   export const education: TimelineItem[] = [

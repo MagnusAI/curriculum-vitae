@@ -1,60 +1,56 @@
-# Curriculum Vitae
+# Curriculum Vitae — the pixel world edition 🕹️
 
-A modern, responsive CV/Resume web application built with React, TypeScript, and Chakra UI.
+An interactive CV: instead of scrolling a boring document, you walk around a little
+pixel universe as Magnus and explore his career.
 
-## Features
+- 🌳 **Education Forest** (north) — one tree + sign per education entry
+- 🌾 **Skill Fields** (south) — one crop row per skill category
+- 🐑 **Hobby Meadow** (east) — farm animals, one per hobby
+- 🏠 **The house** — the wife, a piano that actually plays (WebAudio),
+  a computer holding the work experience, and a bookshelf about this site
+- 🐕 A Jack Russell terrier follows you everywhere
+- 📄 **Download the "boring" PDF** — generated client-side from the same data files,
+  always available from the start screen and the in-game HUD
 
-- Clean, professional design
-- Dark/Light mode support
-- Responsive layout for all devices
-- Easy to customize and extend
+Works with keyboard (WASD/arrows + E) on desktop and an on-screen d-pad +
+interact button on touch devices.
+
+## Tech
+
+- React 19 + TypeScript + Vite
+- Hand-rolled HTML5 canvas engine (`src/game/engine/`) — fixed-timestep loop,
+  tilemap, camera, AABB collision, sprite animation, WebAudio chiptune synth.
+  No game framework.
+- All pixel art is **generated from code**: `node scripts/generate-art.mjs`
+  writes the sprite sheets in `src/assets/game/` and the atlas map
+  `src/game/atlas.ts`. Set `PREVIEW_DIR` to also emit 4×-scaled previews.
+- PDF via `@react-pdf/renderer`, lazy-loaded so it stays out of the main bundle.
+
+## Data
+
+All CV content lives in `src/data/*.ts` (work experience, education, skills,
+hobbies, profile). The world is data-driven: adding a job or education entry is
+just adding an object there — the game and the PDF both pick it up.
+(Slot positions for the map live in `src/game/world/overworld.ts`.)
 
 ## Development
 
-This project was built using:
-- React 19
-- TypeScript
-- Vite
-- Chakra UI v3
-
-### Getting Started
-
-1. Clone the repository
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-
-### Building for Production
-
-To build the application for production:
-
 ```
+npm install
+npm run dev      # → http://localhost:5173/curriculum-vitae/
+npm run lint
 npm run build
+npm run preview  # serve the production build
 ```
 
-The built files will be located in the `dist` directory.
+Debug helpers: append `?debug` to expose `window.__game`, `?touch` to force
+touch controls on desktop.
 
-### Deployment
+## Deployment
 
-This application is configured for GitHub Pages deployment. To deploy:
-
-```
-npm run deploy
-```
-
-Or push to the main branch to trigger the GitHub Actions workflow.
-
-## Customizing
-
-To customize this CV for your own use:
-1. Update the personal information in `src/App.tsx`
-2. Add your own projects and skills
-3. Modify the styling and layout as needed
+GitHub Pages. Push to `main` to trigger the GitHub Actions workflow, or
+`npm run deploy` for a manual `gh-pages` push. The Vite base path is
+`/curriculum-vitae/`.
 
 ## License
 

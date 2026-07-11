@@ -13,12 +13,10 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.14.2",
-    "@emotion/react": "^11.14.0",
-    "next-themes": "^0.4.6",
+    "@fontsource/press-start-2p": "^5.2.7",
+    "@react-pdf/renderer": "^4.5.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

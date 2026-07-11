@@ -1,4 +1,4 @@
-import { TimelineItem } from "../components/cv/Timeline";
+import { TimelineItem } from "./types";
 
 // Work experience data
 export const workExperience: TimelineItem[] = [
