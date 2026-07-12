@@ -33,15 +33,19 @@ const PEAK_ROWS = 4; // rows 0..3
 const GAP = { x0: 26, x1: 28 }; // path between the lakes, up into the peaks
 const WATER_ROWS = { y0: 4, y1: 6 };
 
-// Career trees hide among the wild forest in the south-east, oldest first.
+// The career grove: a clearing enclosed by a ring of (non-interactive)
+// pines, entered from the campsite. Job trees stand inside with signs,
+// chronological reading order: top row left→right, then bottom row.
+const GROVE = { cx: 35, cy: 25, rx: 10, ry: 6.5 };
+const GROVE_ENTRANCE = { x0: 36, x1: 37, maxY: 20 };
 const CAREER_TREE_SPOTS: [number, number][] = [
-  [26, 31],
+  [29, 22],
+  [34, 22],
+  [39, 22],
   [29, 27],
-  [32, 30],
-  [36, 25],
-  [39, 29],
-  [43, 22],
-  [45, 26],
+  [34, 27],
+  [39, 27],
+  [44, 25],
 ];
 
 function rng(seed: number): () => number {
@@ -262,43 +266,50 @@ export function buildOverworld(assets: GameAssets): SceneDef {
   entities.push(new Animal(32 * TILE, 8 * TILE, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(65, 0.18)));
   entities.push(new Animal(34 * TILE, 8 * TILE + 8, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(62, 0.18)));
 
-  // ======================================= career forest (south-east wedge)
-  // Triangle roughly from (23, 33) up to (46, 16): wild trees fill it, the
-  // career trees stand among them (oldest to the south-west).
-  const forestMinY = (x: number) => Math.round(33 - ((x - 23) * 17) / 23);
+  // ====================================== career grove (enclosed pine ring)
+  // path from the campsite clearing down to the grove entrance
+  fillTiles(GROVE_ENTRANCE.x0, 16, GROVE_ENTRANCE.x1, 19, T.PATH);
+  // the enclosing wall of pines — pines are never interactive
+  for (let y = Math.floor(GROVE.cy - GROVE.ry) - 1; y <= Math.ceil(GROVE.cy + GROVE.ry) + 1; y++) {
+    for (let x = Math.floor(GROVE.cx - GROVE.rx) - 1; x <= Math.ceil(GROVE.cx + GROVE.rx) + 1; x++) {
+      if (x < 1 || x >= W - 1 || y < 1 || y >= H - 1) continue;
+      const dx = (x - GROVE.cx) / GROVE.rx;
+      const dy = (y - GROVE.cy) / GROVE.ry;
+      const d = dx * dx + dy * dy;
+      if (d < 0.75 || d > 1.15) continue;
+      if (y <= GROVE_ENTRANCE.maxY && x >= GROVE_ENTRANCE.x0 && x <= GROVE_ENTRANCE.x1) continue; // gate
+      plantTree((x + y) % 2 === 0 ? 'tree_pine_l' : 'tree_pine_m', x, y);
+    }
+  }
+  // job trees inside the clearing, each with its own sign in front
   const careerChrono = [...workExperience].reverse();
   if (careerChrono.length > CAREER_TREE_SPOTS.length) {
     console.warn(
       `overworld: ${careerChrono.length} work entries but only ${CAREER_TREE_SPOTS.length} tree spots — extend CAREER_TREE_SPOTS`,
     );
   }
-  const speciesBySector: Record<string, 'oak' | 'pine' | 'fruit'> = {
-    finance: 'pine',
+  const speciesBySector: Record<string, 'oak' | 'birch' | 'fruit'> = {
+    finance: 'birch',
     software: 'oak',
     retail: 'fruit',
   };
   careerChrono.slice(0, CAREER_TREE_SPOTS.length).forEach((item, i) => {
     const species = speciesBySector[item.sector ?? ''] ?? 'oak';
     const size = tenureTreeSize(tenureMonths(item.period));
-    plantTree(`tree_${species}_${size}` as keyof typeof PROPS, CAREER_TREE_SPOTS[i][0], CAREER_TREE_SPOTS[i][1], {
+    const [tx, ty] = CAREER_TREE_SPOTS[i];
+    const dialog = careerDialog(item);
+    plantTree(`tree_${species}_${size}` as keyof typeof PROPS, tx, ty, {
       interactPrompt: `Inspect tree — ${item.organization}`,
-      dialog: careerDialog(item),
+      dialog,
+    });
+    prop('sign', tx, ty + 1, {
+      feet: { ox: 0, oy: 6, w: 14, h: 10 },
+      interactPrompt: `Read sign — ${item.organization}`,
+      dialog,
     });
   });
-  // wild filler trees on a jittered grid, keeping clear of the career trees
-  const fillerKinds = ['tree_oak_m', 'tree_pine_m', 'tree_oak_s', 'tree_pine_s', 'tree_oak_l', 'tree_fruit_s'] as const;
-  let fillerIndex = 0;
-  for (let x = 24; x <= 46; x += 2) {
-    for (let y = Math.max(16, forestMinY(x)); y <= 32; y += 2) {
-      if ((x + y) % 6 === 0) continue; // leave walking lanes
-      const nearCareer = CAREER_TREE_SPOTS.some(([cx, cy]) => Math.abs(cx - x) <= 1 && Math.abs(cy - y) <= 1);
-      if (nearCareer) continue;
-      const jx = ((r() * 3) | 0) - 1;
-      plantTree(fillerKinds[fillerIndex++ % fillerKinds.length], Math.min(46, Math.max(24, x + jx)), y);
-    }
-  }
-  // forest sign at the north-west edge of the woods
-  prop('sign', 24, 19, {
+  // forest sign right at the grove entrance
+  prop('sign', 34, 17, {
     feet: { ox: 0, oy: 6, w: 14, h: 10 },
     interactPrompt: 'Read the forest sign',
     dialog: forestSignDialog(),

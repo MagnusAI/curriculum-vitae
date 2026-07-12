@@ -14,9 +14,9 @@ function isPartTime(item: TimelineItem): boolean {
 }
 
 const SECTOR_LABEL: Record<string, string> = {
-  finance: 'Finance 🌲',
-  software: 'Software 🌳',
-  retail: 'Retail 🍎',
+  finance: 'Finance (birch)',
+  software: 'Software (oak)',
+  retail: 'Retail (fruit tree)',
 };
 
 // ---------------------------------------------------------------- education
@@ -204,16 +204,17 @@ export function mountainSignDialog(): DialogContent {
 
 export function forestSignDialog(): DialogContent {
   return {
-    title: 'Career Forest',
+    title: 'The Career Grove',
     subtitle: 'How to read this zone',
     icon: '🌲',
     sections: [
       {
         lines: [
-          'Somewhere in these woods stand my planted career trees, oldest nearest this sign.',
+          'Inside this ring of pines stands one planted tree per job, each with its own sign.',
+          'Read them top row first, left to right — oldest job to newest.',
           'Bigger tree = longer tenure (sapling → young → mature).',
-          'Species = industry: 🌲 pine is finance, 🌳 broadleaf is software, 🍎 fruit tree is retail.',
-          'Wander between the wild trees — the planted ones will introduce themselves when you get close.',
+          'Species = industry: white-barked birch is finance, broadleaf oak is software, 🍎 fruit tree is retail.',
+          'The pines themselves are just the fence — only signed trees talk.',
         ],
       },
     ],

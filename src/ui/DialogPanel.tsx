@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { DialogContent } from '../game/events';
+import { DialogAction, DialogContent } from '../game/events';
 
 interface DialogPanelProps {
   content: DialogContent;
   onClose: () => void;
+  onAction: (action: DialogAction) => void;
   isTouch: boolean;
 }
 
 const CLOSE_KEYS = new Set(['Escape', 'KeyE', 'Enter', 'Space']);
 
-export function DialogPanel({ content, onClose, isTouch }: DialogPanelProps) {
+export function DialogPanel({ content, onClose, onAction, isTouch }: DialogPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +64,13 @@ export function DialogPanel({ content, onClose, isTouch }: DialogPanelProps) {
             </div>
           ))}
         </div>
+        {content.action && (
+          <div className="dialog-action">
+            <button className="pixel-button" onClick={() => onAction(content.action!)}>
+              {content.action.label}
+            </button>
+          </div>
+        )}
         <div className="dialog-hint">{isTouch ? 'tap outside to close' : 'E / Esc to close'}</div>
       </div>
     </div>

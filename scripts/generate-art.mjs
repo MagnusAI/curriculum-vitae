@@ -191,6 +191,7 @@ const TILE_NAMES = [
   'GRASS_A', 'GRASS_B', 'GRASS_FLOWER_R', 'GRASS_FLOWER_Y', 'GRASS_TUFT',
   'PATH', 'SOIL', 'FLOOR_A', 'FLOOR_B', 'WALL', 'WALL_BASE', 'VOID', 'DOORMAT',
   'ROCK_A', 'ROCK_B', 'CLIFF', 'SNOW', 'WATER_A', 'WATER_B',
+  'SKY_A', 'SKY_B', 'CLOUD_A', 'CLOUD_B',
 ];
 const TILESET_COLS = 16;
 
@@ -345,6 +346,39 @@ function drawTileset() {
     }
     img.rect(ox, oy, TILE, 1, hex('#3f89bd'));
   }
+  // sky variants (mountain scene backdrop)
+  const skyBase = hex('#a9d6f5');
+  const skyLight = hex('#c2e4fb');
+  for (const [name, seed] of [['SKY_A', 55], ['SKY_B', 91]]) {
+    const ox = atX(name);
+    const oy = atY(name);
+    const r = rng(seed);
+    img.rect(ox, oy, TILE, TILE, skyBase);
+    for (let i = 0; i < 3; i++) {
+      const wx = (r() * (TILE - 6)) | 0;
+      const wy = (r() * TILE) | 0;
+      img.rect(ox + wx, oy + wy, 4 + ((r() * 3) | 0), 1, skyLight);
+    }
+  }
+  // two-tile cloud (left + right halves)
+  {
+    const cloudWhite = hex('#f7fbff');
+    const cloudShade = hex('#dcebf8');
+    for (const [name, isLeft] of [['CLOUD_A', true], ['CLOUD_B', false]]) {
+      const ox = atX(name);
+      const oy = atY(name);
+      img.rect(ox, oy, TILE, TILE, skyBase);
+      // puffy half-blob: full on the inner edge, rounded on the outer
+      for (let y = 4; y < 13; y++) {
+        const roundness = y < 6 || y > 10 ? 3 : 0;
+        const x0 = isLeft ? roundness : 0;
+        const x1 = isLeft ? TILE : TILE - roundness;
+        for (let x = x0; x < x1; x++) {
+          img.set(ox + x, oy + y, y > 10 ? cloudShade : cloudWhite);
+        }
+      }
+    }
+  }
   return img;
 }
 
@@ -432,26 +466,29 @@ const TREE_SIZES = {
   l: { w: 32, h: 32, canopyH: 22, trunkW: 8, trunkH: 10 },
 };
 
-function drawCanopyTree(img, ox, oy, size, seed, { fruit = false } = {}) {
+function drawCanopyTree(img, ox, oy, size, seed, { fruit = false, birch = false } = {}) {
   const s = TREE_SIZES[size];
   const r = rng(seed);
   const cx = s.w / 2 - 0.5;
   const cy = s.canopyH / 2 - 0.5;
+  const leaf = birch ? hex('#8fce6a') : C.leaf;
+  const leafDark = birch ? hex('#6cb04a') : C.leafDark;
+  const leafLight = birch ? hex('#b3e28e') : C.leafLight;
   for (let y = 0; y < s.canopyH; y++) {
     for (let x = 0; x < s.w; x++) {
       const dx = (x - cx) / (s.w / 2 - 0.5);
       const dy = (y - cy) / (s.canopyH / 2 - 0.5);
       const d = dx * dx + dy * dy;
       if (d > 1) continue;
-      let c = C.leaf;
-      if (d > 0.72) c = C.leafDark;
-      else if (dx < 0.2 && dy < -0.1 && r() < 0.5) c = C.leafLight;
+      let c = leaf;
+      if (d > 0.72) c = leafDark;
+      else if (dx < 0.2 && dy < -0.1 && r() < 0.5) c = leafLight;
       if (d > 0.9) c = C.outline;
       img.set(ox + x, oy + y, c);
     }
   }
   for (let i = 0; i < s.w; i++) {
-    img.set(ox + 2 + ((r() * (s.w - 4)) | 0), oy + 2 + ((r() * (s.canopyH - 4)) | 0), r() < 0.5 ? C.leafDark : C.leafLight);
+    img.set(ox + 2 + ((r() * (s.w - 4)) | 0), oy + 2 + ((r() * (s.canopyH - 4)) | 0), r() < 0.5 ? leafDark : leafLight);
   }
   if (fruit) {
     const fruits = size === 's' ? 3 : size === 'm' ? 5 : 7;
@@ -462,11 +499,18 @@ function drawCanopyTree(img, ox, oy, size, seed, { fruit = false } = {}) {
       img.set(fx + 1, fy, hex('#b5382f'));
     }
   }
-  // trunk
+  // trunk (birch: pale bark with dark horizontal dashes)
+  const trunkMain = birch ? hex('#e9e5da') : C.trunk;
+  const trunkShade = birch ? hex('#c9c4b6') : C.trunkDark;
   const tx = ox + Math.floor((s.w - s.trunkW) / 2);
   const ty = oy + s.h - s.trunkH;
-  img.rect(tx, ty - 2, s.trunkW, s.trunkH + 2, C.trunk);
-  img.rect(tx, ty - 2, Math.max(1, s.trunkW >> 2), s.trunkH + 2, C.trunkDark);
+  img.rect(tx, ty - 2, s.trunkW, s.trunkH + 2, trunkMain);
+  img.rect(tx, ty - 2, Math.max(1, s.trunkW >> 2), s.trunkH + 2, trunkShade);
+  if (birch) {
+    for (let y = ty; y < oy + s.h - 1; y += 3) {
+      img.rect(tx + 1 + (((y / 3) | 0) % 2) * Math.max(1, s.trunkW - 3), y, Math.max(2, s.trunkW >> 1), 1, hex('#3a352e'));
+    }
+  }
   img.rect(tx - 1, ty, 1, s.trunkH, C.outline);
   img.rect(tx + s.trunkW, ty, 1, s.trunkH, C.outline);
   img.rect(tx, oy + s.h - 1, s.trunkW, 1, C.outline);
@@ -504,22 +548,24 @@ function drawPineTree(img, ox, oy, size, seed) {
 
 // ---- mountain checkpoints ----
 function drawCairn(img, ox, oy) {
+  // stacked flat slabs — light tops, dark sides, visible gaps between layers
   img.grid(
     [
-      '.....OOOO.......',
-      '....OggggO......',
-      '...OggGgggO.....',
-      '...OOOOOOOO.....',
-      '..OggggGggggO...',
-      '..OgGgggggGgO...',
-      '..OOOOOOOOOOO...',
-      '.OggGggggggGgO..',
-      '.OgggggGgggggO..',
-      '..OOOOOOOOOOO...',
+      '......OOOO......',
+      '.....OllllO.....',
+      '.....OddddO.....',
+      '....OOOOOOOO....',
+      '...OllllllllO...',
+      '...OmmmmmmddO...',
+      '...OOOOOOOOOO...',
+      '..OllllllllllO..',
+      '..OlmmmmmmmddO..',
+      '..OmmddddddddO..',
+      '..OOOOOOOOOOOO..',
     ],
-    { O: C.outline, g: hex('#a8a29a'), G: hex('#847e76') },
+    { O: C.outline, l: hex('#c6c0b6'), m: hex('#a8a29a'), d: hex('#847e76') },
     ox,
-    oy + 6,
+    oy + 5,
   );
 }
 
@@ -967,20 +1013,22 @@ function drawBush(img, ox, oy) {
 }
 
 function drawRock(img, ox, oy) {
+  // angular faceted boulder: bright top-left face, mid face, shaded right
   img.grid(
     [
-      '.....OOOO.......',
-      '...OOggggO......',
-      '..OggggggGO.....',
-      '.OgggggggGGO....',
-      '.OgGgggggGGO....',
-      '.OGGgggGGGGO....',
-      '..OOGGGGGOO.....',
-      '....OOOOO.......',
+      '......OOOO......',
+      '....OOllllO.....',
+      '...OlllllllO....',
+      '..OllllllmmmO...',
+      '.OlllllmmmmmdO..',
+      '.OllmmmmmmdddO..',
+      '.OmmmmmmddddDO..',
+      '..OmmdddddDDO...',
+      '...OOOOOOOOO....',
     ],
-    { O: C.outline, g: hex('#a8a29a'), G: hex('#847e76') },
+    { O: C.outline, l: hex('#c6c0b6'), m: hex('#a8a29a'), d: hex('#847e76'), D: hex('#6b655e') },
     ox,
-    oy + 7,
+    oy + 6,
   );
 }
 
@@ -1791,6 +1839,9 @@ for (const size of ['s', 'm', 'l']) {
   addProp(`tree_pine_${size}`, dims.w, dims.h, (img, ox, oy) => drawPineTree(img, ox, oy, size, 910 + size.charCodeAt(0)));
   addProp(`tree_fruit_${size}`, dims.w, dims.h, (img, ox, oy) =>
     drawCanopyTree(img, ox, oy, size, 920 + size.charCodeAt(0), { fruit: true }),
+  );
+  addProp(`tree_birch_${size}`, dims.w, dims.h, (img, ox, oy) =>
+    drawCanopyTree(img, ox, oy, size, 930 + size.charCodeAt(0), { birch: true }),
   );
 }
 // mountain checkpoints

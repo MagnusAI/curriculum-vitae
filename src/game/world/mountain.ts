@@ -19,7 +19,7 @@ const SNOW_ROWS = 9; // rows APEX.y..APEX.y+SNOW_ROWS are snow-capped
 // The serpentine trail, carved through the (otherwise solid) rock as
 // horizontal switchbacks joined by short climbs. Two tiles wide.
 const TRAIL_SEGMENTS: { x0: number; x1: number; y0: number; y1: number }[] = [
-  { x0: 19, x1: 20, y0: 29, y1: 34 }, // entrance from the grass
+  { x0: 19, x1: 20, y0: 29, y1: 35 }, // entrance from the bottom edge
   { x0: 9, x1: 20, y0: 27, y1: 28 }, // switchback 1 (west)
   { x0: 9, x1: 10, y0: 24, y1: 28 },
   { x0: 9, x1: 30, y0: 24, y1: 25 }, // switchback 2 (east)
@@ -46,8 +46,10 @@ const SIGN_SLOTS: [number, number][] = [
   [27, 14],
 ];
 
+// The slopes keep widening past BASE_ROW so the mountain's foot fills the
+// bottom of the map — everything around it is sky.
 function insideMountain(x: number, y: number): boolean {
-  if (y < APEX.y || y > BASE_ROW) return false;
+  if (y < APEX.y) return false;
   const half = ((y - APEX.y) / (BASE_ROW - APEX.y)) * BASE_HALF;
   return Math.abs(x - APEX.x) <= half;
 }
@@ -68,11 +70,11 @@ export function buildMountain(assets: GameAssets): SceneDef {
   const solid = new Uint8Array(W * H);
   const r = rng(4711);
 
-  // grass base with variety
+  // sky all around — the mountain floats above the world. Nothing outside
+  // the rock is walkable.
+  solid.fill(1);
   for (let i = 0; i < W * H; i++) {
-    const v = r();
-    ground[i] =
-      v < 0.42 ? T.GRASS_A : v < 0.84 ? T.GRASS_B : v < 0.9 ? T.GRASS_TUFT : v < 0.95 ? T.GRASS_FLOWER_Y : T.GRASS_FLOWER_R;
+    ground[i] = r() < 0.6 ? T.SKY_A : T.SKY_B;
   }
 
   const setTile = (x: number, y: number, id: number) => {
@@ -82,19 +84,30 @@ export function buildMountain(assets: GameAssets): SceneDef {
     solid[y * W + x] = isSolid ? 1 : 0;
   };
 
-  // the mountain body: solid rock, snow near the apex, cliff row at the base
-  for (let y = APEX.y; y <= BASE_ROW; y++) {
+  // drifting clouds (two tiles wide), only in open sky
+  const CLOUDS: [number, number][] = [
+    [2, 6],
+    [33, 4],
+    [4, 16],
+    [35, 13],
+    [1, 24],
+    [36, 21],
+    [8, 2],
+    [28, 8],
+    [6, 10],
+  ];
+  for (const [cx, cy] of CLOUDS) {
+    if (insideMountain(cx, cy) || insideMountain(cx + 1, cy)) continue;
+    setTile(cx, cy, T.CLOUD_A);
+    setTile(cx + 1, cy, T.CLOUD_B);
+  }
+
+  // the mountain body: solid rock, snow near the apex
+  for (let y = APEX.y; y < H; y++) {
     for (let x = 0; x < W; x++) {
       if (!insideMountain(x, y)) continue;
       const snow = y < APEX.y + SNOW_ROWS;
       setTile(x, y, snow ? T.SNOW : r() < 0.5 ? T.ROCK_A : T.ROCK_B);
-      markSolid(x, y);
-    }
-  }
-  // cliff shading along the mountain's base edge
-  for (let x = 0; x < W; x++) {
-    if (insideMountain(x, BASE_ROW)) {
-      setTile(x, BASE_ROW, T.CLIFF);
     }
   }
 
@@ -118,7 +131,7 @@ export function buildMountain(assets: GameAssets): SceneDef {
     solid[y * W + W - 1] = 1;
   }
   // exit gap at the bottom edge (walk south to leave)
-  for (let x = 18; x <= 21; x++) solid[(H - 1) * W + x] = 0;
+  for (let x = 19; x <= 20; x++) solid[(H - 1) * W + x] = 0;
 
   const entities: Entity[] = [];
   const P = PROPS;
@@ -139,12 +152,17 @@ export function buildMountain(assets: GameAssets): SceneDef {
       `mountain: ${educationChrono.length} education entries but only ${SIGN_SLOTS.length} sign slots — extend SIGN_SLOTS`,
     );
   }
+  const teleportHome = { label: '🏠 Teleport back home', type: 'teleport-home' as const };
+  const summitIndex = Math.min(educationChrono.length, SIGN_SLOTS.length) - 1;
   educationChrono.slice(0, SIGN_SLOTS.length).forEach((item, i) => {
     const [sx, sy] = SIGN_SLOTS[i];
+    const dialog = educationDialog(item);
+    // the top sign offers a shortcut back down so nobody has to walk
+    if (i === summitIndex) dialog.action = teleportHome;
     prop('sign', sx, sy, {
       feet: { ox: 0, oy: 6, w: 14, h: 10 },
       interactPrompt: 'Read waymark',
-      dialog: educationDialog(item),
+      dialog,
     });
   });
 
@@ -160,14 +178,15 @@ export function buildMountain(assets: GameAssets): SceneDef {
         {
           lines: [
             'From high school at the bottom to a Master of Science up here — that’s the whole climb.',
-            'Enjoy the view, then head back down; there’s more to explore.',
+            'Enjoy the view — and take the shortcut down whenever you like.',
           ],
         },
       ],
+      action: teleportHome,
     },
   });
 
-  // decoration: cairns at the turns, pines and rocks on the grass
+  // decoration: cairns at the turns, boulders and hardy pines on the rock
   for (const [cx, cy] of [
     [10, 26],
     [29, 23],
@@ -177,18 +196,14 @@ export function buildMountain(assets: GameAssets): SceneDef {
     prop('cairn', cx, cy, { feet: { ox: 1, oy: 8, w: 13, h: 8 } });
   }
   for (const [px, py] of [
-    [3, 28],
     [5, 32],
     [12, 32],
     [27, 32],
     [34, 31],
-    [37, 27],
-    [2, 22],
-    [37, 20],
-    [3, 12],
-    [36, 10],
+    [7, 28],
+    [33, 27],
   ] as const) {
-    const region = r() < 0.5 ? P.tree_pine_l : P.tree_pine_m;
+    const region = r() < 0.5 ? P.tree_pine_m : P.tree_pine_s;
     entities.push(
       new Prop(assets.props, region, px * TILE + Math.floor((TILE - region.w) / 2), (py + 1) * TILE - region.h, {
         feet: { ox: Math.floor(region.w / 2) - 6, oy: region.h - 8, w: 12, h: 8 },
@@ -196,9 +211,10 @@ export function buildMountain(assets: GameAssets): SceneDef {
     );
   }
   for (const [rx, ry] of [
-    [7, 30],
+    [7, 31],
     [31, 29],
-    [35, 15],
+    [24, 28],
+    [15, 23],
   ] as const) {
     prop('rock', rx, ry, { feet: { ox: 1, oy: 8, w: 11, h: 7 } });
   }

@@ -133,6 +133,12 @@ export class Game {
     };
   }
 
+  // Used by dialog action buttons (e.g. the summit sign) to skip the walk back.
+  returnHome(): void {
+    if (!this.scenes) return;
+    this.switchScene('overworld', { x: 107, y: 250, facing: 'down' });
+  }
+
   private switchScene(target: SceneName, spawn: SpawnPoint): void {
     this.scene = this.scenes[target];
     this.player.place(spawn.x, spawn.y, spawn.facing);
