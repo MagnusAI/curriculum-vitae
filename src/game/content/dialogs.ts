@@ -175,10 +175,10 @@ export function welcomeDialog(): DialogContent {
       {
         lines: [
           'You are controlling Magnus. Walk around and poke at things!',
-          '🏔️ North — Education Mountain: climb the trail',
-          '🌲 East — the Career Forest: one tree per job',
-          '🌱 South-west — the Skills Yard',
-          '🏕️ South-east — the campsite',
+          '🏔️ North — take the path between the lakes to climb Education Mountain',
+          '🌲 South-east — the Career Forest: one planted tree per job',
+          '🌱 South-west — the garden: skills growing in beds, pots and on the tool rack',
+          '🏕️ East — the campsite',
           '🏠 And do step inside the house.',
         ],
       },
@@ -195,8 +195,7 @@ export function mountainSignDialog(): DialogContent {
       {
         lines: [
           'Education is the foundation everything else stands on — so it gets a mountain.',
-          'The higher a checkpoint sits on the trail, the higher the education. The lookout tower at the summit marks the master’s degree.',
-          'Interact with each waymark, cabin and tower for the details.',
+          'Follow this path between the lakes and take the winding trail up. The higher a waymark sits, the higher the education — the flag at the summit marks the master’s degree.',
         ],
       },
     ],
@@ -211,10 +210,10 @@ export function forestSignDialog(): DialogContent {
     sections: [
       {
         lines: [
-          'One planted tree per job, oldest on the left — a timeline you can walk along.',
+          'Somewhere in these woods stand my planted career trees, oldest nearest this sign.',
           'Bigger tree = longer tenure (sapling → young → mature).',
           'Species = industry: 🌲 pine is finance, 🌳 broadleaf is software, 🍎 fruit tree is retail.',
-          'The wild trees around them are just forest — the planted row follows the path.',
+          'Wander between the wild trees — the planted ones will introduce themselves when you get close.',
         ],
       },
     ],

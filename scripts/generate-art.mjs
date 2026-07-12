@@ -190,7 +190,7 @@ const TILE = 16;
 const TILE_NAMES = [
   'GRASS_A', 'GRASS_B', 'GRASS_FLOWER_R', 'GRASS_FLOWER_Y', 'GRASS_TUFT',
   'PATH', 'SOIL', 'FLOOR_A', 'FLOOR_B', 'WALL', 'WALL_BASE', 'VOID', 'DOORMAT',
-  'ROCK_A', 'ROCK_B', 'CLIFF', 'SNOW',
+  'ROCK_A', 'ROCK_B', 'CLIFF', 'SNOW', 'WATER_A', 'WATER_B',
 ];
 const TILESET_COLS = 16;
 
@@ -328,6 +328,22 @@ function drawTileset() {
     }
     img.set(ox + 4, oy + 5, hex('#ffffff'));
     img.set(ox + 11, oy + 10, hex('#ffffff'));
+  }
+  // water variants
+  for (const [name, seed] of [['WATER_A', 71], ['WATER_B', 137]]) {
+    const ox = atX(name);
+    const oy = atY(name);
+    const r = rng(seed);
+    img.rect(ox, oy, TILE, TILE, hex('#4fa4d8'));
+    for (let i = 0; i < 4; i++) {
+      const wx = (r() * (TILE - 5)) | 0;
+      const wy = 2 + ((r() * (TILE - 4)) | 0);
+      img.rect(ox + wx, oy + wy, 3 + ((r() * 3) | 0), 1, hex('#6fbde8'));
+    }
+    for (let i = 0; i < 5; i++) {
+      img.set(ox + ((r() * TILE) | 0), oy + ((r() * TILE) | 0), hex('#3f89bd'));
+    }
+    img.rect(ox, oy, TILE, 1, hex('#3f89bd'));
   }
   return img;
 }
@@ -570,6 +586,29 @@ function drawTower(img, ox, oy) {
   img.rect(ox + 17, oy + 15, 1, 31, C.woodDarker);
   for (let y = 17; y < 46; y += 4) img.rect(ox + 14, oy + y, 4, 1, C.woodDarker);
   img.rect(ox + 5, oy + 45, 22, 1, C.outline);
+}
+
+function drawFlag(img, ox, oy) {
+  // summit flag: pole with a red pennant
+  img.rect(ox + 6, oy + 2, 2, 24, hex('#c8c4b8'));
+  img.rect(ox + 6, oy + 2, 1, 24, hex('#f0ede4'));
+  img.rect(ox + 5, oy + 2, 1, 24, C.outline);
+  img.rect(ox + 8, oy + 2, 1, 24, C.outline);
+  img.rect(ox + 5, oy + 1, 4, 1, C.outline);
+  img.grid(
+    [
+      'ORRRRRRR.',
+      'ORRRRRRRO',
+      'ORRRRRO..',
+      'ORRRO....',
+      'ORO......',
+    ],
+    { O: C.outline, R: hex('#d9534f') },
+    ox + 9,
+    oy + 2,
+  );
+  img.rect(ox + 4, oy + 26, 8, 2, hex('#847e76'));
+  img.rect(ox + 4, oy + 26, 8, 1, hex('#a8a29a'));
 }
 
 // ---- campsite ----
@@ -1758,6 +1797,7 @@ for (const size of ['s', 'm', 'l']) {
 addProp('cairn', 16, 16, drawCairn);
 addProp('cabin', 48, 40, drawCabin);
 addProp('tower', 32, 48, drawTower);
+addProp('flag', 16, 28, drawFlag);
 // campsite
 addProp('tent', 32, 28, drawTent);
 addProp('campfire_a', 16, 16, (img, ox, oy) => drawCampfireFrame(img, ox, oy, false));

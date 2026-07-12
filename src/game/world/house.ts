@@ -118,7 +118,7 @@ export function buildHouse(assets: GameAssets): SceneDef {
         // stepping on the doormat leaves the house
         rect: { x: 6 * TILE, y: (H - 1) * TILE + 2, w: 2 * TILE, h: 10 },
         target: 'overworld',
-        spawn: { x: 107, y: 314, facing: 'down' },
+        spawn: { x: 107, y: 250, facing: 'down' },
       },
     ],
     spawn: { x: 107, y: 136, facing: 'up' },

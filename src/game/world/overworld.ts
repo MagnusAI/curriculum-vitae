@@ -1,4 +1,3 @@
-import { education } from '../../data/education';
 import { hobbies } from '../../data/hobbies';
 import { gardenBeds, pottedPlants, rackTools } from '../../data/skills';
 import { workExperience } from '../../data/work-experience';
@@ -12,7 +11,6 @@ import { Prop } from '../entities/prop';
 import {
   bedDialog,
   careerDialog,
-  educationDialog,
   forestSignDialog,
   hobbyDialog,
   mailboxDialog,
@@ -28,32 +26,24 @@ import { GameAssets, SceneDef } from './scene';
 const W = 48;
 const H = 34;
 
-// ---------------------------------------------------------------- mountain
-// Terraces from summit down; each has a walkable band, a south cliff row and
-// a 2-tile ramp gap in that cliff leading up from the terrace below.
-const TERRACES = [
-  { x0: 19, x1: 29, rows: [1, 2, 3], cliffRow: 4, rampX: 21, snow: true }, // summit
-  { x0: 16, x1: 32, rows: [5, 6], cliffRow: 7, rampX: 30, snow: false },
-  { x0: 13, x1: 35, rows: [8, 9], cliffRow: 10, rampX: 15, snow: false },
-  { x0: 10, x1: 38, rows: [11, 12], cliffRow: 13, rampX: 23, snow: false },
+// Decorative mountain skyline along the top edge: peak apex columns.
+// The gap between the middle peaks is the entrance to the mountain scene.
+const PEAKS = [3, 12, 20, 34, 43];
+const PEAK_ROWS = 4; // rows 0..3
+const GAP = { x0: 26, x1: 28 }; // path between the lakes, up into the peaks
+const WATER_ROWS = { y0: 4, y1: 6 };
+
+// Career trees hide among the wild forest in the south-east, oldest first.
+const CAREER_TREE_SPOTS: [number, number][] = [
+  [26, 31],
+  [29, 27],
+  [32, 30],
+  [36, 25],
+  [39, 29],
+  [43, 22],
+  [45, 26],
 ];
 
-// Checkpoint slots, chronological (lowest education first): trail base,
-// terrace 1..3, summit. Extend if more education entries are added.
-const CHECKPOINTS: { kind: 'sign' | 'cairn' | 'cabin' | 'tower'; tx: number; ty: number }[] = [
-  { kind: 'sign', tx: 26, ty: 15 }, // trail base
-  { kind: 'cairn', tx: 19, ty: 11 },
-  { kind: 'sign', tx: 26, ty: 8 },
-  { kind: 'cabin', tx: 27, ty: 5 },
-  { kind: 'tower', tx: 23, ty: 2 }, // summit
-  { kind: 'sign', tx: 21, ty: 11 },
-];
-
-// Career forest slots along the main road, oldest job on the left.
-const CAREER_TREE_XS = [28, 31, 34, 37, 40, 43, 45];
-const CAREER_TREE_ROW = 18; // trunk-base tile row (north side of the road)
-
-// deterministic decoration noise
 function rng(seed: number): () => number {
   let a = seed;
   return () => {
@@ -95,14 +85,12 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     tx: number,
     ty: number,
     options?: ConstructorParameters<typeof Prop>[4],
-    pxOffset: [number, number] = [0, 0],
   ) => {
-    const p = new Prop(assets.props, P[name], tx * TILE + pxOffset[0], ty * TILE + pxOffset[1], options);
+    const p = new Prop(assets.props, P[name], tx * TILE, ty * TILE, options);
     entities.push(p);
     return p;
   };
 
-  // Plants a tree whose trunk base sits on tile row `ty`.
   const plantTree = (
     name: keyof typeof PROPS,
     tx: number,
@@ -116,12 +104,7 @@ export function buildOverworld(assets: GameAssets): SceneDef {
       tx * TILE + Math.floor((TILE - region.w) / 2),
       (ty + 1) * TILE - region.h,
       {
-        feet: {
-          ox: Math.floor(region.w / 2) - 6,
-          oy: region.h - 8,
-          w: 12,
-          h: 8,
-        },
+        feet: { ox: Math.floor(region.w / 2) - 6, oy: region.h - 8, w: 12, h: 8 },
         ...options,
       },
     );
@@ -129,224 +112,80 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     return p;
   };
 
-  // ================================================== 🏔️ Education Mountain
-  for (const terrace of TERRACES) {
-    for (const row of terrace.rows) {
-      for (let x = terrace.x0; x <= terrace.x1; x++) {
-        setTile(x, row, terrace.snow ? T.SNOW : r() < 0.5 ? T.ROCK_A : T.ROCK_B);
+  // =========================================== mountain skyline (decorative)
+  for (let y = 0; y < PEAK_ROWS; y++) {
+    for (const apex of PEAKS) {
+      const half = Math.round(((y + 1.5) / PEAK_ROWS) * 4.5);
+      for (let x = apex - half; x <= apex + half; x++) {
+        if (x < 0 || x >= W) continue;
+        setTile(x, y, y < 2 ? T.SNOW : r() < 0.5 ? T.ROCK_A : T.ROCK_B);
       }
-      // rock rim: outermost column of each band is impassable
-      markSolid(terrace.x0, row);
-      markSolid(terrace.x1, row);
     }
-    for (let x = terrace.x0; x <= terrace.x1; x++) {
-      const isRamp = x === terrace.rampX || x === terrace.rampX + 1;
-      setTile(x, terrace.cliffRow, isRamp ? T.PATH : T.CLIFF);
-      markSolid(x, terrace.cliffRow, !isRamp);
+    // whole skyline band is impassable scenery
+    for (let x = 0; x < W; x++) markSolid(x, y);
+  }
+  // shade the very bottom rock edge where the range meets the water
+  for (let x = 0; x < W; x++) {
+    if (ground[(PEAK_ROWS - 1) * W + x] === T.ROCK_A || ground[(PEAK_ROWS - 1) * W + x] === T.ROCK_B) {
+      if (r() < 0.5) setTile(x, PEAK_ROWS - 1, T.CLIFF);
     }
-  }
-  // trail: base approach + switchbacks across the terraces
-  fillTiles(23, 14, 24, 16, T.PATH); // from the road up to the first ramp
-  fillTiles(16, 11, 24, 12, T.PATH);
-  fillTiles(15, 8, 31, 9, T.PATH);
-  fillTiles(21, 5, 31, 6, T.PATH);
-  fillTiles(21, 2, 24, 3, T.PATH);
-  // rocks scattered on terraces
-  for (const [rx, ry] of [
-    [12, 11],
-    [34, 8],
-    [18, 5],
-    [33, 11],
-  ] as const) {
-    prop('rock', rx, ry, { feet: { ox: 1, oy: 8, w: 11, h: 7 } });
-  }
-  // pines on the flanks
-  for (const [px, py] of [
-    [7, 4],
-    [5, 8],
-    [8, 11],
-    [41, 5],
-    [43, 9],
-    [40, 12],
-    [3, 5],
-    [44, 3],
-  ] as const) {
-    plantTree('tree_pine_l', px, py);
   }
 
-  // mountain grammar sign at the trail base
-  prop('sign', 21, 15, {
+  // ============================================== the two lakes + entrance
+  for (let y = WATER_ROWS.y0; y <= WATER_ROWS.y1; y++) {
+    for (let x = 1; x < W - 1; x++) {
+      if (x >= GAP.x0 && x <= GAP.x1) continue;
+      setTile(x, y, r() < 0.6 ? T.WATER_A : T.WATER_B);
+      markSolid(x, y);
+    }
+  }
+  // the path to the mountains, between the lakes and into the skyline
+  fillTiles(GAP.x0, 1, GAP.x1, WATER_ROWS.y1 + 2, T.PATH);
+  for (let y = 1; y <= WATER_ROWS.y1; y++) {
+    for (let x = GAP.x0; x <= GAP.x1; x++) markSolid(x, y, false);
+  }
+
+  // sign explaining the mountains, beside the path entrance
+  prop('sign', 24, 7, {
     feet: { ox: 0, oy: 6, w: 14, h: 10 },
     interactPrompt: 'Read the trail sign',
     dialog: mountainSignDialog(),
   });
 
-  // education checkpoints, chronological from the bottom of the trail
-  const educationChrono = [...education].reverse();
-  if (educationChrono.length > CHECKPOINTS.length) {
-    console.warn(
-      `overworld: ${educationChrono.length} education entries but only ${CHECKPOINTS.length} checkpoints — extend CHECKPOINTS`,
-    );
-  }
-  educationChrono.slice(0, CHECKPOINTS.length).forEach((item, i) => {
-    const cp = CHECKPOINTS[i];
-    const dialog = educationDialog(item);
-    if (cp.kind === 'sign') {
-      prop('sign', cp.tx, cp.ty, {
-        feet: { ox: 0, oy: 6, w: 14, h: 10 },
-        interactPrompt: 'Read waymark',
-        dialog,
-      });
-    } else if (cp.kind === 'cairn') {
-      prop('cairn', cp.tx, cp.ty, {
-        feet: { ox: 1, oy: 8, w: 13, h: 8 },
-        interactPrompt: 'Inspect cairn',
-        dialog,
-      });
-    } else if (cp.kind === 'cabin') {
-      entities.push(
-        new Prop(assets.props, P.cabin, cp.tx * TILE, (cp.ty + 2) * TILE - P.cabin.h, {
-          feet: { ox: 0, oy: P.cabin.h - 14, w: P.cabin.w, h: 14 },
-          interactPrompt: 'Visit the cabin',
-          dialog,
-        }),
-      );
-    } else {
-      entities.push(
-        new Prop(assets.props, P.tower, cp.tx * TILE, (cp.ty + 1) * TILE - P.tower.h, {
-          feet: { ox: 2, oy: P.tower.h - 12, w: P.tower.w - 4, h: 12 },
-          interactPrompt: 'Climb the lookout tower',
-          dialog,
-        }),
-      );
-    }
-  });
-
-  // a couple of sheep grazing at the foothill (pure decoration)
-  const meadow = { x: 28 * TILE, y: 14 * TILE, w: 10 * TILE, h: 2 * TILE };
-  entities.push(new Animal(30 * TILE, 14 * TILE + 8, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(65, 0.18)));
-  entities.push(new Animal(34 * TILE, 15 * TILE, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(62, 0.18)));
-
-  // ==================================================== roads + house + mail
-  fillTiles(2, 19, 46, 20, T.PATH); // main east-west road
-  fillTiles(11, 21, 12, 22, T.PATH); // south to the Skills Yard gate
-  fillTiles(36, 21, 37, 23, T.PATH); // south to the campsite
-
+  // ======================================================== house + mailbox
   const houseX = 4 * TILE;
-  const houseY = 14 * TILE;
+  const houseY = 10 * TILE;
   entities.push(
     new Prop(assets.props, P.house, houseX, houseY, {
       feet: { ox: 0, oy: 34, w: 96, h: 46 },
     }),
   );
-  prop('mailbox', 10, 18, {
+  prop('mailbox', 10, 14, {
     feet: { ox: 2, oy: 4, w: 12, h: 11 },
     interactPrompt: 'Check mailbox',
     dialog: mailboxDialog(),
   });
-  // a chicken pecking between the garden beds (decoration)
-  const chickenRun = { x: 6 * TILE, y: 26 * TILE, w: 8 * TILE, h: TILE };
-  entities.push(new Animal(8 * TILE, 26 * TILE, assets.chicken, chickenRun, 'Bok?', undefined, () => playBlip(84, 0.07)));
 
-  // welcome sign at the spawn
-  prop('sign', 26, 21, {
+  // welcome sign near the spawn, in the middle of the open meadow
+  prop('sign', 22, 13, {
     feet: { ox: 0, oy: 6, w: 14, h: 10 },
     interactPrompt: 'Read sign',
     dialog: welcomeDialog(),
   });
 
-  // ===================================================== 🌲 Career Forest
-  if (workExperience.length > CAREER_TREE_XS.length) {
-    console.warn(
-      `overworld: ${workExperience.length} work entries but only ${CAREER_TREE_XS.length} tree slots — extend CAREER_TREE_XS`,
-    );
-  }
-  const careerChrono = [...workExperience].reverse(); // oldest first, left to right
-  const speciesBySector: Record<string, 'oak' | 'pine' | 'fruit'> = {
-    finance: 'pine',
-    software: 'oak',
-    retail: 'fruit',
-  };
-  careerChrono.slice(0, CAREER_TREE_XS.length).forEach((item, i) => {
-    const species = speciesBySector[item.sector ?? ''] ?? 'oak';
-    const size = tenureTreeSize(tenureMonths(item.period));
-    plantTree(`tree_${species}_${size}` as keyof typeof PROPS, CAREER_TREE_XS[i], CAREER_TREE_ROW, {
-      interactPrompt: `Inspect tree — ${item.organization}`,
-      dialog: careerDialog(item),
-    });
+  // ============================================ skills corner (south-west)
+  // tool rack below the house
+  prop('toolrack', 4, 17, {
+    feet: { ox: 1, oy: 22, w: 30, h: 9 },
+    interactPrompt: 'Check the tool rack',
+    dialog: toolRackDialog(rackTools),
   });
-  // forest grammar sign at the row's start
-  prop('sign', 26, 18, {
-    feet: { ox: 0, oy: 6, w: 14, h: 10 },
-    interactPrompt: 'Read the forest sign',
-    dialog: forestSignDialog(),
-  });
-  // wild filler trees (non-interactive) to make it feel like a forest
-  const fillerKinds = ['tree_oak_s', 'tree_pine_s', 'tree_oak_m', 'tree_pine_m', 'tree_fruit_s'] as const;
-  const fillerSpots: [number, number][] = [
-    [29, 16],
-    [33, 16],
-    [38, 16],
-    [42, 16],
-    [45, 17],
-    [30, 22],
-    [33, 23],
-    [39, 22],
-    [43, 23],
-    [45, 21],
-    [27, 23],
-    [41, 16],
-  ];
-  fillerSpots.forEach(([fx, fy], i) => {
-    // keep the campsite path clear
-    if (fx >= 35 && fx <= 38 && fy >= 21 && fy <= 23) return;
-    plantTree(fillerKinds[i % fillerKinds.length], fx, fy);
-  });
-
-  // ===================================================== 🌱 Skills Yard
-  const YARD = { x0: 3, y0: 22, x1: 21, y1: 31 };
-  for (let x = YARD.x0; x <= YARD.x1; x++) {
-    if (x !== 11 && x !== 12) {
-      prop('fence_h', x, YARD.y0, { feet: { ox: 0, oy: 4, w: 16, h: 11 } });
-    }
-    prop('fence_h', x, YARD.y1, { feet: { ox: 0, oy: 4, w: 16, h: 11 } });
-  }
-  for (let y = YARD.y0 + 1; y < YARD.y1; y++) {
-    prop('fence_v', YARD.x0, y, { feet: { ox: 4, oy: 0, w: 8, h: 16 } });
-    prop('fence_v', YARD.x1, y, { feet: { ox: 4, oy: 0, w: 8, h: 16 } });
-  }
-  // yard grammar sign beside the gate (just outside the fence)
-  prop('sign', 13, 21, {
-    feet: { ox: 0, oy: 6, w: 14, h: 10 },
-    interactPrompt: 'Read the yard sign',
-    dialog: yardSignDialog(),
-  });
-  // raised garden beds — growth stage = proficiency
-  const BED_SLOTS: [number, number][] = [
-    [5, 24],
-    [11, 24],
-    [17, 24],
-    [7, 27],
-    [14, 27],
-    [17, 29],
-  ];
-  if (gardenBeds.length > BED_SLOTS.length) {
-    console.warn(`overworld: ${gardenBeds.length} garden beds but only ${BED_SLOTS.length} slots — extend BED_SLOTS`);
-  }
-  gardenBeds.slice(0, BED_SLOTS.length).forEach((bed, i) => {
-    const [bx, by] = BED_SLOTS[i];
-    prop(`bed_${bed.proficiency}` as keyof typeof PROPS, bx, by, {
-      feet: { ox: 0, oy: 6, w: 32, h: 17 },
-      interactPrompt: `Look at the ${bed.name} bed`,
-      dialog: bedDialog(bed),
-    });
-  });
-  // potted plants along the west fence
+  // potted plants lined up next to the rack
   const POT_SLOTS: [number, number][] = [
-    [4, 24],
-    [4, 26],
-    [4, 28],
-    [4, 30],
+    [8, 17],
+    [10, 17],
+    [12, 17],
+    [14, 17],
   ];
   if (pottedPlants.length > POT_SLOTS.length) {
     console.warn(`overworld: ${pottedPlants.length} potted plants but only ${POT_SLOTS.length} slots — extend POT_SLOTS`);
@@ -360,46 +199,112 @@ export function buildOverworld(assets: GameAssets): SceneDef {
       dialog: potDialog(plant),
     });
   });
-  // the tool rack
-  prop('toolrack', 8, 29, {
-    feet: { ox: 1, oy: 22, w: 30, h: 9 },
-    interactPrompt: 'Check the tool rack',
-    dialog: toolRackDialog(rackTools),
+  // garden beds along the bottom-left
+  const BED_SLOTS: [number, number][] = [
+    [3, 24],
+    [9, 24],
+    [15, 24],
+    [5, 28],
+    [11, 28],
+    [17, 28],
+  ];
+  if (gardenBeds.length > BED_SLOTS.length) {
+    console.warn(`overworld: ${gardenBeds.length} garden beds but only ${BED_SLOTS.length} slots — extend BED_SLOTS`);
+  }
+  gardenBeds.slice(0, BED_SLOTS.length).forEach((bed, i) => {
+    const [bx, by] = BED_SLOTS[i];
+    prop(`bed_${bed.proficiency}` as keyof typeof PROPS, bx, by, {
+      feet: { ox: 0, oy: 6, w: 32, h: 17 },
+      interactPrompt: `Look at the ${bed.name} bed`,
+      dialog: bedDialog(bed),
+    });
   });
+  // skills sign between the rack and the beds
+  prop('sign', 8, 21, {
+    feet: { ox: 0, oy: 6, w: 14, h: 10 },
+    interactPrompt: 'Read the garden sign',
+    dialog: yardSignDialog(),
+  });
+  // resident chicken pecking between the beds
+  const chickenRun = { x: 4 * TILE, y: 26 * TILE, w: 12 * TILE, h: TILE };
+  entities.push(new Animal(8 * TILE, 26 * TILE, assets.chicken, chickenRun, 'Bok?', undefined, () => playBlip(84, 0.07)));
 
-  // ===================================================== 🏕️ Campsite
+  // ================================================= campsite (mid-east)
   const campsiteHobby = hobbies.find((h) => h.spot === 'campsite');
   const campsiteDialog = campsiteHobby
     ? hobbyDialog(campsiteHobby, 'Curious about the rest? My piano and computer are inside the house — go have a look!')
     : undefined;
-  // dirt clearing
-  fillTiles(32, 25, 41, 29, T.PATH);
+  fillTiles(38, 12, 44, 15, T.PATH); // the camp clearing
   entities.push(
-    new Prop(assets.props, P.tent, 33 * TILE, 24 * TILE - 4, {
+    new Prop(assets.props, P.tent, 41 * TILE, 11 * TILE - 4, {
       feet: { ox: 2, oy: 12, w: 28, h: 15 },
       interactPrompt: 'Peek into the tent',
       dialog: campsiteDialog,
     }),
   );
-  prop('campfire_a', 37, 27, {
+  prop('campfire_a', 39, 13, {
     feet: { ox: 1, oy: 10, w: 14, h: 6 },
     interactPrompt: 'Warm your hands',
     dialog: campsiteDialog,
     altRegion: P.campfire_b,
     animFps: 5,
   });
-  prop('log', 35, 28, { feet: { ox: 0, oy: 9, w: 15, h: 6 } });
-  prop('log', 39, 27, { feet: { ox: 0, oy: 9, w: 15, h: 6 } });
-  prop('sign', 31, 26, {
+  prop('log', 38, 14, { feet: { ox: 0, oy: 9, w: 15, h: 6 } });
+  prop('log', 41, 14, { feet: { ox: 0, oy: 9, w: 15, h: 6 } });
+  prop('sign', 37, 12, {
     feet: { ox: 0, oy: 6, w: 14, h: 10 },
     interactPrompt: 'Read the campsite sign',
     dialog: campsiteDialog,
   });
-  plantTree('tree_pine_m', 32, 24);
-  plantTree('tree_pine_m', 42, 25);
-  plantTree('tree_pine_s', 41, 29);
 
-  // ================================================== borders + edge solids
+  // sheep grazing by the eastern lake
+  const meadow = { x: 31 * TILE, y: 7 * TILE + 8, w: 5 * TILE, h: 2 * TILE };
+  entities.push(new Animal(32 * TILE, 8 * TILE, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(65, 0.18)));
+  entities.push(new Animal(34 * TILE, 8 * TILE + 8, assets.sheep, meadow, 'Baah?', undefined, () => playBlip(62, 0.18)));
+
+  // ======================================= career forest (south-east wedge)
+  // Triangle roughly from (23, 33) up to (46, 16): wild trees fill it, the
+  // career trees stand among them (oldest to the south-west).
+  const forestMinY = (x: number) => Math.round(33 - ((x - 23) * 17) / 23);
+  const careerChrono = [...workExperience].reverse();
+  if (careerChrono.length > CAREER_TREE_SPOTS.length) {
+    console.warn(
+      `overworld: ${careerChrono.length} work entries but only ${CAREER_TREE_SPOTS.length} tree spots — extend CAREER_TREE_SPOTS`,
+    );
+  }
+  const speciesBySector: Record<string, 'oak' | 'pine' | 'fruit'> = {
+    finance: 'pine',
+    software: 'oak',
+    retail: 'fruit',
+  };
+  careerChrono.slice(0, CAREER_TREE_SPOTS.length).forEach((item, i) => {
+    const species = speciesBySector[item.sector ?? ''] ?? 'oak';
+    const size = tenureTreeSize(tenureMonths(item.period));
+    plantTree(`tree_${species}_${size}` as keyof typeof PROPS, CAREER_TREE_SPOTS[i][0], CAREER_TREE_SPOTS[i][1], {
+      interactPrompt: `Inspect tree — ${item.organization}`,
+      dialog: careerDialog(item),
+    });
+  });
+  // wild filler trees on a jittered grid, keeping clear of the career trees
+  const fillerKinds = ['tree_oak_m', 'tree_pine_m', 'tree_oak_s', 'tree_pine_s', 'tree_oak_l', 'tree_fruit_s'] as const;
+  let fillerIndex = 0;
+  for (let x = 24; x <= 46; x += 2) {
+    for (let y = Math.max(16, forestMinY(x)); y <= 32; y += 2) {
+      if ((x + y) % 6 === 0) continue; // leave walking lanes
+      const nearCareer = CAREER_TREE_SPOTS.some(([cx, cy]) => Math.abs(cx - x) <= 1 && Math.abs(cy - y) <= 1);
+      if (nearCareer) continue;
+      const jx = ((r() * 3) | 0) - 1;
+      plantTree(fillerKinds[fillerIndex++ % fillerKinds.length], Math.min(46, Math.max(24, x + jx)), y);
+    }
+  }
+  // forest sign at the north-west edge of the woods
+  prop('sign', 24, 19, {
+    feet: { ox: 0, oy: 6, w: 14, h: 10 },
+    interactPrompt: 'Read the forest sign',
+    dialog: forestSignDialog(),
+  });
+
+  // ================================================== borders + decoration
   for (let x = 0; x < W; x++) {
     solid[x] = 1;
     solid[(H - 1) * W + x] = 1;
@@ -411,22 +316,25 @@ export function buildOverworld(assets: GameAssets): SceneDef {
   for (let x = 1; x < W - 1; x += 2) {
     if (r() < 0.85) plantTree(r() < 0.4 ? 'tree_pine_l' : 'tree_oak_l', x, H - 2);
   }
-  for (let y = 15; y < H - 2; y += 2) {
+  for (let y = 10; y < H - 2; y += 2) {
     plantTree('tree_oak_l', 1, y);
-    if (y < 17 || y > 24) plantTree('tree_pine_l', W - 2, y);
   }
-  // top corners of the map (beside the mountain flanks)
-  for (let x = 1; x < 9; x += 2) plantTree('tree_pine_l', x, 1);
-  for (let x = 40; x < W - 1; x += 2) plantTree('tree_pine_l', x, 1);
-
-  // scattered decoration
+  for (let y = 10; y < 16; y += 2) {
+    plantTree('tree_pine_l', W - 2, y);
+  }
   for (const [bx, by] of [
-    [25, 16],
-    [45, 19],
-    [8, 21],
-    [24, 23],
+    [18, 11],
+    [30, 14],
+    [20, 21],
+    [13, 12],
   ] as const) {
     prop('bush', bx, by, { feet: { ox: 1, oy: 6, w: 14, h: 9 } });
+  }
+  for (const [rx, ry] of [
+    [16, 20],
+    [33, 17],
+  ] as const) {
+    prop('rock', rx, ry, { feet: { ox: 1, oy: 8, w: 11, h: 7 } });
   }
 
   const map: TilemapData = { w: W, h: H, layers: [ground], solid };
@@ -443,7 +351,13 @@ export function buildOverworld(assets: GameAssets): SceneDef {
         target: 'house',
         spawn: { x: 107, y: 136, facing: 'up' },
       },
+      {
+        // the path between the lakes leads up the education mountain
+        rect: { x: GAP.x0 * TILE, y: 2 * TILE, w: (GAP.x1 - GAP.x0 + 1) * TILE, h: 10 },
+        target: 'mountain',
+        spawn: { x: 19 * TILE + 11, y: 34 * TILE - 6, facing: 'up' },
+      },
     ],
-    spawn: { x: 24 * TILE + 3, y: 20 * TILE + 2, facing: 'up' },
+    spawn: { x: 24 * TILE + 3, y: 13 * TILE, facing: 'up' },
   };
 }

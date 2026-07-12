@@ -14,7 +14,7 @@ export interface DialogContent {
   sections: DialogSection[];
 }
 
-export type SceneName = 'overworld' | 'house';
+export type SceneName = 'overworld' | 'house' | 'mountain';
 
 export type GameEvent =
   | { type: 'openDialog'; content: DialogContent }

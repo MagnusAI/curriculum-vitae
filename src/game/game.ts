@@ -19,6 +19,7 @@ import { Entity, SpawnPoint, WorldApi, entityCenter } from './entities/entity';
 import { Player } from './entities/player';
 import { GameEvents, SceneName } from './events';
 import { buildHouse } from './world/house';
+import { buildMountain } from './world/mountain';
 import { buildOverworld } from './world/overworld';
 import { GameAssets, SceneDef } from './world/scene';
 
@@ -80,6 +81,7 @@ export class Game {
     this.scenes = {
       overworld: buildOverworld(assets),
       house: buildHouse(assets),
+      mountain: buildMountain(assets),
     };
     this.scene = this.scenes.overworld;
     this.player = new Player(assets.player);
@@ -154,7 +156,7 @@ export class Game {
     const candidates: Entity[] = [...this.scene.entities, this.dog];
     for (const e of candidates) {
       if (!e.interact) continue;
-      const margin = 5;
+      const margin = 8;
       if (
         probe.x >= e.x - margin &&
         probe.x <= e.x + e.w + margin &&
