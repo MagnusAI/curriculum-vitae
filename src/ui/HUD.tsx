@@ -11,7 +11,9 @@ export function HUD({ prompt, scene, isTouch }: HUDProps) {
 
   return (
     <div className="hud">
-      <div className="hud-scene">{scene === 'house' ? '🏠 Home' : '🌍 The Grounds'}</div>
+      <div className="hud-scene">
+        {scene === 'house' ? '🏠 Home' : scene === 'mountain' ? '🏔️ Education Trail' : '🌍 The Grounds'}
+      </div>
       <div className="hud-top">
         <button className="pixel-button" onClick={download} disabled={busy}>
           {busy ? 'Baking…' : '📄 CV PDF'}

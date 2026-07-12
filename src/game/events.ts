@@ -7,14 +7,20 @@ export interface DialogSection {
   tags?: string[];
 }
 
+export interface DialogAction {
+  label: string;
+  type: 'teleport-home';
+}
+
 export interface DialogContent {
   title: string;
   subtitle?: string;
   icon?: string; // emoji used in the panel header
   sections: DialogSection[];
+  action?: DialogAction; // optional button rendered at the bottom of the panel
 }
 
-export type SceneName = 'overworld' | 'house';
+export type SceneName = 'overworld' | 'house' | 'mountain';
 
 export type GameEvent =
   | { type: 'openDialog'; content: DialogContent }

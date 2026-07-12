@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Game } from './game/game';
-import { DialogContent, SceneName } from './game/events';
+import { DialogAction, DialogContent, SceneName } from './game/events';
 import { DialogPanel } from './ui/DialogPanel';
 import { GameCanvas } from './ui/GameCanvas';
 import { HUD } from './ui/HUD';
@@ -47,12 +47,22 @@ function App() {
 
   const closeDialog = useCallback(() => setDialog(null), []);
 
+  const handleDialogAction = useCallback(
+    (action: DialogAction) => {
+      if (action.type === 'teleport-home') game?.returnHome();
+      setDialog(null);
+    },
+    [game],
+  );
+
   return (
     <div className="game-root">
       <GameCanvas onGame={setGame} />
       {started && <HUD prompt={dialog ? null : prompt} scene={scene} isTouch={isTouch} />}
       {started && isTouch && !dialog && game && <TouchControls virtual={game.virtualInput} />}
-      {dialog && <DialogPanel content={dialog} onClose={closeDialog} isTouch={isTouch} />}
+      {dialog && (
+        <DialogPanel content={dialog} onClose={closeDialog} onAction={handleDialogAction} isTouch={isTouch} />
+      )}
       {!started && <StartScreen onStart={() => setStarted(true)} isTouch={isTouch} />}
     </div>
   );

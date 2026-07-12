@@ -168,6 +168,21 @@ const C = {
   pineLight: hex('#4d9c6b'),
   trunk: hex('#7a5230'),
   trunkDark: hex('#5f3f24'),
+  // mountain
+  rock: hex('#9a948c'),
+  rockDark: hex('#7f7a72'),
+  rockLight: hex('#b0aaa2'),
+  cliff: hex('#6e6862'),
+  cliffDark: hex('#57524c'),
+  snow: hex('#eef2f8'),
+  snowShade: hex('#d8e2ee'),
+  // campsite
+  canvasGreen: hex('#5c8a4a'),
+  canvasDark: hex('#4a7039'),
+  canvasLight: hex('#6e9e5a'),
+  flame: hex('#f2913d'),
+  flameLight: hex('#f8c53a'),
+  flameDark: hex('#d95f2b'),
 };
 
 // ============================================================ tileset (ground)
@@ -175,6 +190,8 @@ const TILE = 16;
 const TILE_NAMES = [
   'GRASS_A', 'GRASS_B', 'GRASS_FLOWER_R', 'GRASS_FLOWER_Y', 'GRASS_TUFT',
   'PATH', 'SOIL', 'FLOOR_A', 'FLOOR_B', 'WALL', 'WALL_BASE', 'VOID', 'DOORMAT',
+  'ROCK_A', 'ROCK_B', 'CLIFF', 'SNOW', 'WATER_A', 'WATER_B',
+  'SKY_A', 'SKY_B', 'CLOUD_A', 'CLOUD_B',
 ];
 const TILESET_COLS = 16;
 
@@ -189,8 +206,15 @@ function drawGrassBase(img, ox, oy, seed) {
 }
 
 function drawTileset() {
-  const img = new Img(TILESET_COLS * TILE, TILE);
-  const at = (name) => TILE_NAMES.indexOf(name) * TILE;
+  const rows = Math.ceil(TILE_NAMES.length / TILESET_COLS);
+  const img = new Img(TILESET_COLS * TILE, rows * TILE);
+  // helpers return [x, y] px position of a named tile
+  const atX = (name) => (TILE_NAMES.indexOf(name) % TILESET_COLS) * TILE;
+  const atY = (name) => Math.floor(TILE_NAMES.indexOf(name) / TILESET_COLS) * TILE;
+  const at = (name) => {
+    if (atY(name) !== 0) throw new Error(`tile ${name} not on row 0 — use atX/atY`);
+    return atX(name);
+  };
 
   drawGrassBase(img, at('GRASS_A'), 0, 11);
   drawGrassBase(img, at('GRASS_B'), 0, 47);
@@ -264,12 +288,103 @@ function drawTileset() {
     img.rect(ox, 0, 1, TILE, C.outline);
     img.rect(ox + TILE - 1, 0, 1, TILE, C.outline);
   }
+  // rock plateau variants
+  for (const [name, seed] of [['ROCK_A', 61], ['ROCK_B', 89]]) {
+    const ox = at(name);
+    const r = rng(seed);
+    img.rect(ox, 0, TILE, TILE, C.rock);
+    for (let i = 0; i < 22; i++) {
+      img.set(ox + ((r() * TILE) | 0), (r() * TILE) | 0, r() < 0.5 ? C.rockDark : C.rockLight);
+    }
+    if (r() < 0.6) {
+      const cx = 2 + ((r() * 11) | 0);
+      const cy = 2 + ((r() * 11) | 0);
+      img.rect(ox + cx, cy, 3, 1, C.rockDark);
+      img.set(ox + cx + 1, cy + 1, C.rockDark);
+    }
+  }
+  // cliff face (south edge of a terrace)
+  {
+    const ox = at('CLIFF');
+    const r = rng(37);
+    img.rect(ox, 0, TILE, TILE, C.cliff);
+    img.rect(ox, 0, TILE, 2, C.rockLight); // top lip catches light
+    img.rect(ox, 2, TILE, 1, C.rockDark);
+    for (let i = 0; i < 5; i++) {
+      const x = (r() * TILE) | 0;
+      const y = 4 + ((r() * 8) | 0);
+      img.rect(ox + x, y, 1, 3 + ((r() * 5) | 0), C.cliffDark);
+    }
+    img.rect(ox, TILE - 2, TILE, 2, C.cliffDark);
+    img.rect(ox, TILE - 1, TILE, 1, C.outline);
+  }
+  // snow (summit)
+  {
+    const ox = atX('SNOW');
+    const oy = atY('SNOW');
+    const r = rng(101);
+    img.rect(ox, oy, TILE, TILE, C.snow);
+    for (let i = 0; i < 14; i++) {
+      img.set(ox + ((r() * TILE) | 0), oy + ((r() * TILE) | 0), C.snowShade);
+    }
+    img.set(ox + 4, oy + 5, hex('#ffffff'));
+    img.set(ox + 11, oy + 10, hex('#ffffff'));
+  }
+  // water variants
+  for (const [name, seed] of [['WATER_A', 71], ['WATER_B', 137]]) {
+    const ox = atX(name);
+    const oy = atY(name);
+    const r = rng(seed);
+    img.rect(ox, oy, TILE, TILE, hex('#4fa4d8'));
+    for (let i = 0; i < 4; i++) {
+      const wx = (r() * (TILE - 5)) | 0;
+      const wy = 2 + ((r() * (TILE - 4)) | 0);
+      img.rect(ox + wx, oy + wy, 3 + ((r() * 3) | 0), 1, hex('#6fbde8'));
+    }
+    for (let i = 0; i < 5; i++) {
+      img.set(ox + ((r() * TILE) | 0), oy + ((r() * TILE) | 0), hex('#3f89bd'));
+    }
+    img.rect(ox, oy, TILE, 1, hex('#3f89bd'));
+  }
+  // sky variants (mountain scene backdrop)
+  const skyBase = hex('#a9d6f5');
+  const skyLight = hex('#c2e4fb');
+  for (const [name, seed] of [['SKY_A', 55], ['SKY_B', 91]]) {
+    const ox = atX(name);
+    const oy = atY(name);
+    const r = rng(seed);
+    img.rect(ox, oy, TILE, TILE, skyBase);
+    for (let i = 0; i < 3; i++) {
+      const wx = (r() * (TILE - 6)) | 0;
+      const wy = (r() * TILE) | 0;
+      img.rect(ox + wx, oy + wy, 4 + ((r() * 3) | 0), 1, skyLight);
+    }
+  }
+  // two-tile cloud (left + right halves)
+  {
+    const cloudWhite = hex('#f7fbff');
+    const cloudShade = hex('#dcebf8');
+    for (const [name, isLeft] of [['CLOUD_A', true], ['CLOUD_B', false]]) {
+      const ox = atX(name);
+      const oy = atY(name);
+      img.rect(ox, oy, TILE, TILE, skyBase);
+      // puffy half-blob: full on the inner edge, rounded on the outer
+      for (let y = 4; y < 13; y++) {
+        const roundness = y < 6 || y > 10 ? 3 : 0;
+        const x0 = isLeft ? roundness : 0;
+        const x1 = isLeft ? TILE : TILE - roundness;
+        for (let x = x0; x < x1; x++) {
+          img.set(ox + x, oy + y, y > 10 ? cloudShade : cloudWhite);
+        }
+      }
+    }
+  }
   return img;
 }
 
 // ============================================================ props
 const propRegions = {};
-const propsImg = new Img(512, 256);
+const propsImg = new Img(512, 512);
 let cursorX = 0;
 let cursorY = 0;
 let rowH = 0;
@@ -341,6 +456,413 @@ function drawPine(img, ox, oy) {
   img.rect(ox + 13, oy + 26, 2, 6, C.trunkDark);
   img.rect(ox + 12, oy + 26, 1, 6, C.outline);
   img.rect(ox + 19, oy + 26, 1, 6, C.outline);
+}
+
+// ---- parametric career trees: species (oak/pine/fruit) × size (s/m/l) ----
+// Sprite sizes: s = 16x24, m = 24x28, l = 32x32.
+const TREE_SIZES = {
+  s: { w: 16, h: 24, canopyH: 14, trunkW: 4, trunkH: 8 },
+  m: { w: 24, h: 28, canopyH: 18, trunkW: 6, trunkH: 9 },
+  l: { w: 32, h: 32, canopyH: 22, trunkW: 8, trunkH: 10 },
+};
+
+function drawCanopyTree(img, ox, oy, size, seed, { fruit = false, birch = false } = {}) {
+  const s = TREE_SIZES[size];
+  const r = rng(seed);
+  const cx = s.w / 2 - 0.5;
+  const cy = s.canopyH / 2 - 0.5;
+  const leaf = birch ? hex('#8fce6a') : C.leaf;
+  const leafDark = birch ? hex('#6cb04a') : C.leafDark;
+  const leafLight = birch ? hex('#b3e28e') : C.leafLight;
+  for (let y = 0; y < s.canopyH; y++) {
+    for (let x = 0; x < s.w; x++) {
+      const dx = (x - cx) / (s.w / 2 - 0.5);
+      const dy = (y - cy) / (s.canopyH / 2 - 0.5);
+      const d = dx * dx + dy * dy;
+      if (d > 1) continue;
+      let c = leaf;
+      if (d > 0.72) c = leafDark;
+      else if (dx < 0.2 && dy < -0.1 && r() < 0.5) c = leafLight;
+      if (d > 0.9) c = C.outline;
+      img.set(ox + x, oy + y, c);
+    }
+  }
+  for (let i = 0; i < s.w; i++) {
+    img.set(ox + 2 + ((r() * (s.w - 4)) | 0), oy + 2 + ((r() * (s.canopyH - 4)) | 0), r() < 0.5 ? leafDark : leafLight);
+  }
+  if (fruit) {
+    const fruits = size === 's' ? 3 : size === 'm' ? 5 : 7;
+    for (let i = 0; i < fruits; i++) {
+      const fx = ox + 3 + ((r() * (s.w - 6)) | 0);
+      const fy = oy + 3 + ((r() * (s.canopyH - 6)) | 0);
+      img.set(fx, fy, hex('#d9534f'));
+      img.set(fx + 1, fy, hex('#b5382f'));
+    }
+  }
+  // trunk (birch: pale bark with dark horizontal dashes)
+  const trunkMain = birch ? hex('#e9e5da') : C.trunk;
+  const trunkShade = birch ? hex('#c9c4b6') : C.trunkDark;
+  const tx = ox + Math.floor((s.w - s.trunkW) / 2);
+  const ty = oy + s.h - s.trunkH;
+  img.rect(tx, ty - 2, s.trunkW, s.trunkH + 2, trunkMain);
+  img.rect(tx, ty - 2, Math.max(1, s.trunkW >> 2), s.trunkH + 2, trunkShade);
+  if (birch) {
+    for (let y = ty; y < oy + s.h - 1; y += 3) {
+      img.rect(tx + 1 + (((y / 3) | 0) % 2) * Math.max(1, s.trunkW - 3), y, Math.max(2, s.trunkW >> 1), 1, hex('#3a352e'));
+    }
+  }
+  img.rect(tx - 1, ty, 1, s.trunkH, C.outline);
+  img.rect(tx + s.trunkW, ty, 1, s.trunkH, C.outline);
+  img.rect(tx, oy + s.h - 1, s.trunkW, 1, C.outline);
+}
+
+function drawPineTree(img, ox, oy, size, seed) {
+  const s = TREE_SIZES[size];
+  const r = rng(seed);
+  const layers = 3;
+  const layerH = Math.ceil(s.canopyH / layers) + 2;
+  for (let L = 0; L < layers; L++) {
+    const top = Math.floor((L * s.canopyH) / layers) - (L > 0 ? 2 : 0);
+    const maxHalf = ((L + 1.6) / (layers + 0.6)) * (s.w / 2 - 0.5);
+    for (let y = 0; y < layerH; y++) {
+      const half = Math.max(1, Math.round(((y + 1) / layerH) * maxHalf));
+      for (let x = Math.floor(s.w / 2 - half); x < Math.ceil(s.w / 2 + half); x++) {
+        let c = C.pine;
+        if (x < s.w / 2 - half + 2) c = C.pineLight;
+        if (x > s.w / 2 + half - 3) c = C.pineDark;
+        if (y === layerH - 1) c = C.pineDark;
+        img.set(ox + x, oy + top + y, c);
+      }
+    }
+  }
+  for (let i = 0; i < s.w / 2; i++) {
+    img.set(ox + 3 + ((r() * (s.w - 6)) | 0), oy + 3 + ((r() * (s.canopyH - 4)) | 0), C.pineLight);
+  }
+  const tx = ox + Math.floor((s.w - s.trunkW) / 2);
+  const ty = oy + s.h - s.trunkH;
+  img.rect(tx, ty, s.trunkW, s.trunkH, C.trunk);
+  img.rect(tx, ty, Math.max(1, s.trunkW >> 2), s.trunkH, C.trunkDark);
+  img.rect(tx - 1, ty, 1, s.trunkH, C.outline);
+  img.rect(tx + s.trunkW, ty, 1, s.trunkH, C.outline);
+}
+
+// ---- mountain checkpoints ----
+function drawCairn(img, ox, oy) {
+  // stacked flat slabs — light tops, dark sides, visible gaps between layers
+  img.grid(
+    [
+      '......OOOO......',
+      '.....OllllO.....',
+      '.....OddddO.....',
+      '....OOOOOOOO....',
+      '...OllllllllO...',
+      '...OmmmmmmddO...',
+      '...OOOOOOOOOO...',
+      '..OllllllllllO..',
+      '..OlmmmmmmmddO..',
+      '..OmmddddddddO..',
+      '..OOOOOOOOOOOO..',
+    ],
+    { O: C.outline, l: hex('#c6c0b6'), m: hex('#a8a29a'), d: hex('#847e76') },
+    ox,
+    oy + 5,
+  );
+}
+
+function drawCabin(img, ox, oy) {
+  const W = 48;
+  // roof
+  const roofDark = hex('#5a4632');
+  const roof = hex('#6e5740');
+  for (let y = 0; y < 14; y++) {
+    const inset = Math.max(0, 5 - y);
+    for (let x = inset; x < W - inset; x++) {
+      let c = y % 4 === 3 ? roofDark : roof;
+      if (x === inset || x === W - inset - 1 || y === 0) c = C.outline;
+      img.set(ox + x, oy + y, c);
+    }
+  }
+  // log walls
+  for (let y = 14; y < 38; y++) {
+    for (let x = 0; x < W; x++) {
+      let c = (y - 14) % 4 < 2 ? C.wood : C.woodDark;
+      if (x === 0 || x === W - 1 || y === 37) c = C.outline;
+      img.set(ox + x, oy + y, c);
+    }
+  }
+  // door + window
+  img.rect(ox + 20, oy + 22, 10, 16, C.woodDarker);
+  img.rect(ox + 21, oy + 23, 8, 15, hex('#4a3020'));
+  img.rect(ox + 8, oy + 20, 9, 9, C.outline);
+  img.rect(ox + 9, oy + 21, 7, 7, hex('#f8c53a')); // warm lit window
+  img.rect(ox + 12, oy + 21, 1, 7, C.woodDarker);
+  img.rect(ox + 9, oy + 24, 7, 1, C.woodDarker);
+  img.rect(ox + 34, oy + 24, 6, 5, C.outline);
+  img.rect(ox + 35, oy + 25, 4, 3, hex('#9ed4e8'));
+}
+
+function drawTower(img, ox, oy) {
+  const W = 32;
+  // roof
+  for (let y = 0; y < 8; y++) {
+    const half = Math.round(((y + 2) / 9) * (W / 2 - 1));
+    for (let x = W / 2 - half; x < W / 2 + half; x++) {
+      img.set(ox + x, oy + y, y === 7 || x === W / 2 - half || x === W / 2 + half - 1 ? C.outline : hex('#b5482a'));
+    }
+  }
+  // platform + railing
+  img.rect(ox + 3, oy + 12, 26, 3, C.woodDark);
+  img.rect(ox + 3, oy + 12, 26, 1, hex('#c99a6a'));
+  for (let x = 4; x < 28; x += 5) img.rect(ox + x, oy + 8, 2, 4, C.wood);
+  img.rect(ox + 3, oy + 8, 1, 7, C.outline);
+  img.rect(ox + 28, oy + 8, 1, 7, C.outline);
+  // legs with cross brace
+  img.rect(ox + 5, oy + 15, 3, 31, C.wood);
+  img.rect(ox + 24, oy + 15, 3, 31, C.wood);
+  img.rect(ox + 5, oy + 15, 1, 31, hex('#c99a6a'));
+  img.rect(ox + 26, oy + 15, 1, 31, C.woodDark);
+  img.rect(ox + 4, oy + 15, 1, 31, C.outline);
+  img.rect(ox + 27, oy + 15, 1, 31, C.outline);
+  for (let i = 0; i < 16; i++) {
+    img.set(ox + 8 + i, oy + 20 + i, C.woodDark);
+    img.set(ox + 23 - i, oy + 20 + i, C.woodDark);
+  }
+  // ladder
+  img.rect(ox + 14, oy + 15, 1, 31, C.woodDarker);
+  img.rect(ox + 17, oy + 15, 1, 31, C.woodDarker);
+  for (let y = 17; y < 46; y += 4) img.rect(ox + 14, oy + y, 4, 1, C.woodDarker);
+  img.rect(ox + 5, oy + 45, 22, 1, C.outline);
+}
+
+function drawFlag(img, ox, oy) {
+  // summit flag: pole with a red pennant
+  img.rect(ox + 6, oy + 2, 2, 24, hex('#c8c4b8'));
+  img.rect(ox + 6, oy + 2, 1, 24, hex('#f0ede4'));
+  img.rect(ox + 5, oy + 2, 1, 24, C.outline);
+  img.rect(ox + 8, oy + 2, 1, 24, C.outline);
+  img.rect(ox + 5, oy + 1, 4, 1, C.outline);
+  img.grid(
+    [
+      'ORRRRRRR.',
+      'ORRRRRRRO',
+      'ORRRRRO..',
+      'ORRRO....',
+      'ORO......',
+    ],
+    { O: C.outline, R: hex('#d9534f') },
+    ox + 9,
+    oy + 2,
+  );
+  img.rect(ox + 4, oy + 26, 8, 2, hex('#847e76'));
+  img.rect(ox + 4, oy + 26, 8, 1, hex('#a8a29a'));
+}
+
+// ---- campsite ----
+function drawTent(img, ox, oy) {
+  const W = 32;
+  const H = 26;
+  for (let y = 0; y < H; y++) {
+    const half = Math.max(1, Math.round(((y + 2) / (H + 2)) * (W / 2 - 1)));
+    for (let x = W / 2 - half; x < W / 2 + half; x++) {
+      let c = C.canvasGreen;
+      if (x < W / 2 - half + 2) c = C.canvasLight;
+      if (x > W / 2 + half - 3) c = C.canvasDark;
+      if (x === W / 2 - half || x === W / 2 + half - 1 || y === H - 1 || y < 2) c = C.outline;
+      img.set(ox + x, oy + 2 + y, c);
+    }
+  }
+  // opening
+  for (let y = 10; y < H; y++) {
+    const half = Math.round(((y - 8) / (H - 8)) * 5);
+    for (let x = W / 2 - half; x < W / 2 + half; x++) {
+      img.set(ox + x, oy + 2 + y, y === 10 || Math.abs(x - W / 2) === half - 1 ? C.canvasDark : hex('#2b2018'));
+    }
+  }
+  // pole tip
+  img.rect(ox + W / 2 - 1, oy, 2, 3, C.woodDarker);
+}
+
+function drawCampfireFrame(img, ox, oy, tall) {
+  // stone ring + crossed logs
+  img.grid(
+    [
+      '................',
+      '..O..........O..',
+      '.OgO...OO...OgO.',
+      '..O.............',
+      '................',
+    ],
+    { O: C.outline, g: hex('#a8a29a') },
+    ox,
+    oy + 11,
+  );
+  img.rect(ox + 3, oy + 12, 10, 2, C.trunk);
+  img.rect(ox + 3, oy + 13, 10, 1, C.trunkDark);
+  img.rect(ox + 5, oy + 10, 2, 5, C.trunk);
+  img.rect(ox + 9, oy + 10, 2, 5, C.trunk);
+  // flame
+  const base = oy + (tall ? 2 : 4);
+  const h = tall ? 9 : 7;
+  for (let y = 0; y < h; y++) {
+    const half = Math.max(1, Math.round(((y + 1) / h) * 3.4));
+    for (let x = 8 - half; x < 8 + half; x++) {
+      let c = C.flame;
+      if (y > h * 0.45) c = C.flameLight;
+      if (x === 8 - half || x === 8 + half - 1 || y === 0) c = C.flameDark;
+      img.set(ox + x + (tall && y < 3 ? 1 : 0), base + y, c);
+    }
+  }
+}
+
+function drawLog(img, ox, oy) {
+  img.grid(
+    [
+      '.OOOOOOOOOOOOO..',
+      'OkwwwwwwwwwwwkO.',
+      'OkKwwwwwwwwwwkO.',
+      'OkKkkkkkkkkkkkO.',
+      '.OOOOOOOOOOOOO..',
+    ],
+    { O: C.outline, w: C.wood, k: C.woodDark, K: hex('#c99a6a') },
+    ox,
+    oy + 9,
+  );
+}
+
+// ---- skills yard ----
+function drawGardenBed(img, ox, oy, stage) {
+  const W = 32;
+  // wooden frame
+  img.rect(ox, oy + 6, W, 16, C.wood);
+  img.rect(ox, oy + 6, W, 2, hex('#c99a6a'));
+  img.rect(ox, oy + 20, W, 2, C.woodDark);
+  img.rect(ox, oy + 5, W, 1, C.outline);
+  img.rect(ox, oy + 22, W, 1, C.outline);
+  img.rect(ox, oy + 5, 1, 18, C.outline);
+  img.rect(ox + W - 1, oy + 5, 1, 18, C.outline);
+  // soil
+  img.rect(ox + 2, oy + 8, W - 4, 12, C.soil);
+  for (let y = 9; y < 19; y += 3) img.rect(ox + 2, oy + y, W - 4, 1, C.soilDark);
+  const r = rng(500 + stage);
+  if (stage >= 1) {
+    // sprouts
+    for (let x = 4; x < W - 3; x += 4) {
+      img.set(ox + x, oy + 11, C.leafLight);
+      img.set(ox + x, oy + 16, C.leafLight);
+      if (stage === 1) img.set(ox + x, oy + 12, C.leaf);
+    }
+  }
+  if (stage >= 2) {
+    // bushy rows
+    for (let x = 3; x < W - 3; x += 4) {
+      for (const yy of [10, 15]) {
+        img.rect(ox + x, oy + yy, 3, 3, C.leaf);
+        img.set(ox + x + 1, oy + yy, C.leafLight);
+        img.set(ox + x + 2, oy + yy + 2, C.leafDark);
+      }
+    }
+  }
+  if (stage >= 3) {
+    // lush + blooms
+    for (let i = 0; i < 26; i++) {
+      img.set(ox + 3 + ((r() * (W - 6)) | 0), oy + 9 + ((r() * 10) | 0), r() < 0.5 ? C.leaf : C.leafLight);
+    }
+    for (let i = 0; i < 6; i++) {
+      const fx = ox + 4 + ((r() * (W - 8)) | 0);
+      const fy = oy + 10 + ((r() * 8) | 0);
+      img.set(fx, fy, r() < 0.5 ? C.flowerYellow : hex('#d9534f'));
+    }
+  }
+}
+
+function drawPot(img, ox, oy, kind) {
+  // terracotta pot
+  img.grid(
+    [
+      '...OOOOOOOO.....',
+      '..OppppppppO....',
+      '..OpPPPPPPpO....',
+      '...OppppppO.....',
+      '...OpppppPO.....',
+      '....OOOOOO......',
+    ],
+    { O: C.outline, p: hex('#c07048'), P: hex('#a05a38') },
+    ox,
+    oy + 14,
+  );
+  if (kind === 0) {
+    // seedling
+    img.grid(
+      ['......g.........', '.....gLg........', '......g.........'],
+      { g: C.leaf, L: C.leafLight },
+      ox + 1,
+      oy + 11,
+    );
+  } else if (kind === 1) {
+    // leafy
+    img.grid(
+      [
+        '....g...g.......',
+        '...gLg.gLg......',
+        '....ggggg.......',
+        '.....gGg........',
+        '......g.........',
+      ],
+      { g: C.leaf, L: C.leafLight, G: hex('#6a8f37') },
+      ox + 1,
+      oy + 9,
+    );
+  } else {
+    // flowering
+    img.grid(
+      [
+        '.....yry........',
+        '....gyryg.......',
+        '...gLgggLg......',
+        '....ggGgg.......',
+        '......g.........',
+      ],
+      { g: C.leaf, L: C.leafLight, G: hex('#6a8f37'), y: C.flowerYellow, r: hex('#d9534f') },
+      ox + 1,
+      oy + 9,
+    );
+  }
+}
+
+function drawToolRack(img, ox, oy) {
+  const W = 32;
+  // backboard
+  img.rect(ox + 1, oy + 2, W - 2, 22, C.wood);
+  img.rect(ox + 2, oy + 3, W - 4, 2, hex('#c99a6a'));
+  img.rect(ox + 1, oy + 22, W - 2, 2, C.woodDark);
+  img.rect(ox, oy + 2, 1, 22, C.outline);
+  img.rect(ox + W - 1, oy + 2, 1, 22, C.outline);
+  img.rect(ox + 1, oy + 1, W - 2, 1, C.outline);
+  img.rect(ox + 1, oy + 24, W - 2, 1, C.outline);
+  const gray = hex('#a8b0b8');
+  const grayDark = hex('#7d858d');
+  const handle = hex('#c07048');
+  // hammer
+  img.rect(ox + 4, oy + 6, 6, 3, grayDark);
+  img.rect(ox + 4, oy + 6, 6, 1, gray);
+  img.rect(ox + 6, oy + 9, 2, 10, handle);
+  // wrench
+  img.rect(ox + 14, oy + 6, 2, 12, gray);
+  img.rect(ox + 12, oy + 5, 3, 3, gray);
+  img.rect(ox + 15, oy + 5, 3, 3, grayDark);
+  img.set(ox + 14, oy + 6, C.outline);
+  // screwdriver
+  img.rect(ox + 22, oy + 5, 2, 6, hex('#4f74b8'));
+  img.rect(ox + 22, oy + 11, 2, 8, gray);
+  // shine sparkles (well-used tools gleam)
+  img.set(ox + 3, oy + 5, hex('#ffffff'));
+  img.set(ox + 13, oy + 4, hex('#ffffff'));
+  img.set(ox + 17, oy + 9, hex('#ffffff'));
+  // legs
+  img.rect(ox + 3, oy + 25, 3, 5, C.woodDark);
+  img.rect(ox + 26, oy + 25, 3, 5, C.woodDark);
+  img.rect(ox + 3, oy + 30, 3, 1, C.outline);
+  img.rect(ox + 26, oy + 30, 3, 1, C.outline);
 }
 
 function drawHouse(img, ox, oy) {
@@ -491,20 +1013,22 @@ function drawBush(img, ox, oy) {
 }
 
 function drawRock(img, ox, oy) {
+  // angular faceted boulder: bright top-left face, mid face, shaded right
   img.grid(
     [
-      '.....OOOO.......',
-      '...OOggggO......',
-      '..OggggggGO.....',
-      '.OgggggggGGO....',
-      '.OgGgggggGGO....',
-      '.OGGgggGGGGO....',
-      '..OOGGGGGOO.....',
-      '....OOOOO.......',
+      '......OOOO......',
+      '....OOllllO.....',
+      '...OlllllllO....',
+      '..OllllllmmmO...',
+      '.OlllllmmmmmdO..',
+      '.OllmmmmmmdddO..',
+      '.OmmmmmmddddDO..',
+      '..OmmdddddDDO...',
+      '...OOOOOOOOO....',
     ],
-    { O: C.outline, g: hex('#a8a29a'), G: hex('#847e76') },
+    { O: C.outline, l: hex('#c6c0b6'), m: hex('#a8a29a'), d: hex('#847e76'), D: hex('#6b655e') },
     ox,
-    oy + 7,
+    oy + 6,
   );
 }
 
@@ -1308,6 +1832,36 @@ addProp('mailbox', 16, 16, drawMailbox);
 addProp('bush', 16, 16, drawBush);
 addProp('rock', 16, 16, drawRock);
 addCrops();
+// career trees: species × size
+for (const size of ['s', 'm', 'l']) {
+  const dims = TREE_SIZES[size];
+  addProp(`tree_oak_${size}`, dims.w, dims.h, (img, ox, oy) => drawCanopyTree(img, ox, oy, size, 900 + size.charCodeAt(0)));
+  addProp(`tree_pine_${size}`, dims.w, dims.h, (img, ox, oy) => drawPineTree(img, ox, oy, size, 910 + size.charCodeAt(0)));
+  addProp(`tree_fruit_${size}`, dims.w, dims.h, (img, ox, oy) =>
+    drawCanopyTree(img, ox, oy, size, 920 + size.charCodeAt(0), { fruit: true }),
+  );
+  addProp(`tree_birch_${size}`, dims.w, dims.h, (img, ox, oy) =>
+    drawCanopyTree(img, ox, oy, size, 930 + size.charCodeAt(0), { birch: true }),
+  );
+}
+// mountain checkpoints
+addProp('cairn', 16, 16, drawCairn);
+addProp('cabin', 48, 40, drawCabin);
+addProp('tower', 32, 48, drawTower);
+addProp('flag', 16, 28, drawFlag);
+// campsite
+addProp('tent', 32, 28, drawTent);
+addProp('campfire_a', 16, 16, (img, ox, oy) => drawCampfireFrame(img, ox, oy, false));
+addProp('campfire_b', 16, 16, (img, ox, oy) => drawCampfireFrame(img, ox, oy, true));
+addProp('log', 16, 16, drawLog);
+// skills yard
+addProp('bed_1', 32, 24, (img, ox, oy) => drawGardenBed(img, ox, oy, 1));
+addProp('bed_2', 32, 24, (img, ox, oy) => drawGardenBed(img, ox, oy, 2));
+addProp('bed_3', 32, 24, (img, ox, oy) => drawGardenBed(img, ox, oy, 3));
+addProp('pot_a', 16, 20, (img, ox, oy) => drawPot(img, ox, oy, 0));
+addProp('pot_b', 16, 20, (img, ox, oy) => drawPot(img, ox, oy, 1));
+addProp('pot_c', 16, 20, (img, ox, oy) => drawPot(img, ox, oy, 2));
+addProp('toolrack', 32, 32, drawToolRack);
 addProp('piano', 32, 32, drawPiano);
 addProp('desk', 32, 24, drawDesk);
 addProp('bed', 32, 32, drawBed);
@@ -1322,6 +1876,51 @@ addProp('rug', 48, 32, drawRug);
 save('props.png', propsImg);
 save('player.png', makePlayerSheet(PAL_PLAYER));
 save('wife.png', makeWifeSheet());
+// guide NPCs — palette swaps of the player template
+save(
+  'npc_hiker.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#8a6b3a'), // sandy hair
+    T: hex('#d97b29'), // orange fleece
+    t: hex('#b56320'),
+    P: hex('#5a6242'), // olive trousers
+    p: hex('#485038'),
+  }),
+);
+save(
+  'npc_forester.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#3a2c1e'), // dark hair
+    T: hex('#3e7d46'), // forest green
+    t: hex('#2f6136'),
+    P: hex('#5a4632'), // bark brown
+    p: hex('#483828'),
+  }),
+);
+save(
+  'npc_gardener.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#c9a55a'), // straw blond
+    T: hex('#8fae3a'), // leafy green
+    t: hex('#748c2e'),
+    P: hex('#4f74b8'), // denim
+    p: hex('#3d5c96'),
+  }),
+);
+save(
+  'npc_guide.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#2b2018'), // black hair
+    T: hex('#c0392b'), // red alpine jacket
+    t: hex('#96271c'),
+    P: hex('#5a5e66'), // gray trousers
+    p: hex('#484c54'),
+  }),
+);
 save('dog.png', makeDogSheet());
 save('chicken.png', makeAnimalSheet(CHICKEN_A, CHICKEN_B));
 save('sheep.png', makeAnimalSheet(SHEEP_A, SHEEP_B));

@@ -1,3 +1,4 @@
+import { hobbies } from '../../data/hobbies';
 import { PROPS, T } from '../atlas';
 import { TILE } from '../constants';
 import { playTune } from '../engine/audio';
@@ -5,7 +6,7 @@ import { bakeLayers, TilemapData } from '../engine/tilemap';
 import { Entity } from '../entities/entity';
 import { Npc } from '../entities/npc';
 import { Prop } from '../entities/prop';
-import { bookshelfDialog, pianoDialog, wifeDialog, workDialog } from '../content/dialogs';
+import { bookshelfDialog, hobbyDialog, wifeDialog } from '../content/dialogs';
 import { PIANO_TUNE } from '../content/pianoTune';
 import { GameAssets, SceneDef } from './scene';
 
@@ -59,19 +60,24 @@ export function buildHouse(assets: GameAssets): SceneDef {
   // rug in the middle of the room (flat, walkable)
   prop('rug', 88, 76, { solid: false, flat: true, feet: { ox: 0, oy: 0, w: 48, h: 32 } });
 
+  const pianoHobby = hobbies.find((h) => h.spot === 'piano');
+  const deskHobby = hobbies.find((h) => h.spot === 'desk');
+
   // piano against the back wall, left
   prop('piano', 20, 16, {
     feet: { ox: 0, oy: 18, w: 32, h: 14 },
     interactPrompt: 'Play the piano',
-    dialog: pianoDialog(),
+    dialog: pianoHobby
+      ? hobbyDialog(pianoHobby, 'You just heard a few bars of Für Elise. It sounds better in person, promise.')
+      : undefined,
     onInteract: () => playTune(PIANO_TUNE, 170),
   });
 
-  // computer desk — work experience lives here
+  // computer desk — the gaming & tinkering hobby
   prop('desk', 144, 24, {
     feet: { ox: 0, oy: 12, w: 32, h: 12 },
     interactPrompt: 'Check the computer',
-    dialog: workDialog(),
+    dialog: deskHobby ? hobbyDialog(deskHobby) : undefined,
   });
 
   // bookshelf — about this CV
@@ -112,7 +118,7 @@ export function buildHouse(assets: GameAssets): SceneDef {
         // stepping on the doormat leaves the house
         rect: { x: 6 * TILE, y: (H - 1) * TILE + 2, w: 2 * TILE, h: 10 },
         target: 'overworld',
-        spawn: { x: 123, y: 234, facing: 'down' },
+        spawn: { x: 107, y: 250, facing: 'down' },
       },
     ],
     spawn: { x: 107, y: 136, facing: 'up' },

@@ -9,6 +9,10 @@ export interface GameAssets {
   props: HTMLImageElement;
   player: Spritesheet;
   wife: Spritesheet;
+  npcHiker: Spritesheet;
+  npcForester: Spritesheet;
+  npcGardener: Spritesheet;
+  npcGuide: Spritesheet;
   dog: Spritesheet;
   chicken: Spritesheet;
   sheep: Spritesheet;

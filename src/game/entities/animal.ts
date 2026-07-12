@@ -14,22 +14,24 @@ export class Animal implements Entity {
   private flip = false;
   private target: { x: number; y: number } | null = null;
   private restTime: number;
+  interact?: (world: WorldApi) => void;
 
   constructor(
     public x: number,
     public y: number,
     private sheet: Spritesheet,
     private pen: Rect,
-    public interactPrompt: string,
-    private content: DialogContent,
-    private sound?: () => void,
+    public interactPrompt?: string,
+    content?: DialogContent,
+    sound?: () => void,
   ) {
     this.restTime = 1 + Math.random() * 3;
-  }
-
-  interact(world: WorldApi): void {
-    this.sound?.();
-    world.events.emit({ type: 'openDialog', content: this.content });
+    if (content || sound) {
+      this.interact = (world: WorldApi) => {
+        sound?.();
+        if (content) world.events.emit({ type: 'openDialog', content });
+      };
+    }
   }
 
   update(dt: number): void {

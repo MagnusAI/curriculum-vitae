@@ -2,6 +2,10 @@ import tilesetUrl from '../assets/game/tileset.png';
 import propsUrl from '../assets/game/props.png';
 import playerUrl from '../assets/game/player.png';
 import wifeUrl from '../assets/game/wife.png';
+import npcHikerUrl from '../assets/game/npc_hiker.png';
+import npcForesterUrl from '../assets/game/npc_forester.png';
+import npcGardenerUrl from '../assets/game/npc_gardener.png';
+import npcGuideUrl from '../assets/game/npc_guide.png';
 import dogUrl from '../assets/game/dog.png';
 import chickenUrl from '../assets/game/chicken.png';
 import sheepUrl from '../assets/game/sheep.png';
@@ -19,6 +23,7 @@ import { Entity, SpawnPoint, WorldApi, entityCenter } from './entities/entity';
 import { Player } from './entities/player';
 import { GameEvents, SceneName } from './events';
 import { buildHouse } from './world/house';
+import { buildMountain } from './world/mountain';
 import { buildOverworld } from './world/overworld';
 import { GameAssets, SceneDef } from './world/scene';
 
@@ -59,6 +64,10 @@ export class Game {
       props: propsUrl,
       player: playerUrl,
       wife: wifeUrl,
+      npcHiker: npcHikerUrl,
+      npcForester: npcForesterUrl,
+      npcGardener: npcGardenerUrl,
+      npcGuide: npcGuideUrl,
       dog: dogUrl,
       chicken: chickenUrl,
       sheep: sheepUrl,
@@ -71,6 +80,10 @@ export class Game {
       props: images.props,
       player: { image: images.player, frameW: 16, frameH: 24 },
       wife: { image: images.wife, frameW: 16, frameH: 24 },
+      npcHiker: { image: images.npcHiker, frameW: 16, frameH: 24 },
+      npcForester: { image: images.npcForester, frameW: 16, frameH: 24 },
+      npcGardener: { image: images.npcGardener, frameW: 16, frameH: 24 },
+      npcGuide: { image: images.npcGuide, frameW: 16, frameH: 24 },
       dog: { image: images.dog, frameW: 16, frameH: 16 },
       chicken: { image: images.chicken, frameW: 16, frameH: 16 },
       sheep: { image: images.sheep, frameW: 16, frameH: 16 },
@@ -80,6 +93,7 @@ export class Game {
     this.scenes = {
       overworld: buildOverworld(assets),
       house: buildHouse(assets),
+      mountain: buildMountain(assets),
     };
     this.scene = this.scenes.overworld;
     this.player = new Player(assets.player);
@@ -131,6 +145,12 @@ export class Game {
     };
   }
 
+  // Used by dialog action buttons (e.g. the summit sign) to skip the walk back.
+  returnHome(): void {
+    if (!this.scenes) return;
+    this.switchScene('overworld', { x: 107, y: 250, facing: 'down' });
+  }
+
   private switchScene(target: SceneName, spawn: SpawnPoint): void {
     this.scene = this.scenes[target];
     this.player.place(spawn.x, spawn.y, spawn.facing);
@@ -154,7 +174,7 @@ export class Game {
     const candidates: Entity[] = [...this.scene.entities, this.dog];
     for (const e of candidates) {
       if (!e.interact) continue;
-      const margin = 5;
+      const margin = 8;
       if (
         probe.x >= e.x - margin &&
         probe.x <= e.x + e.w + margin &&

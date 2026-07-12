@@ -215,6 +215,12 @@
   white-space: nowrap;
 }
 
+.dialog-action {
+  display: flex;
+  justify-content: center;
+  padding: 4px 16px 14px;
+}
+
 .dialog-hint {
   text-align: center;
   font-size: 8px;
