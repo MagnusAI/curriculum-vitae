@@ -1,4 +1,8 @@
+import { education } from '../../data/education';
+import { hobbies } from '../../data/hobbies';
 import { profileData, summary } from '../../data/profile';
+import { gardenBeds, pottedPlants, rackTools } from '../../data/skills';
+import { workExperience } from '../../data/work-experience';
 import { GardenBed, Hobby, PottedPlant, RackTool, TimelineItem } from '../../data/types';
 import { DialogContent } from '../events';
 import { tenureLabel, tenureMonths } from './tenure';
@@ -140,9 +144,112 @@ export function wifeDialog(): DialogContent {
     sections: [
       {
         lines: [
-          '“Oh, you must be here about Magnus! Let me tell you about him…”',
+          '“Oh, you must be here about Magnus! We are married and live here together — along with our lovely dog, who follows him around whenever he gets the chance.”',
           summary,
-          '“He built this whole little world himself, you know. The dog insisted on being included.”',
+        ],
+      },
+      {
+        heading: 'When he is not working…',
+        lines: hobbies.map((hobby) => `${hobby.name} — ${hobby.description}`),
+      },
+      {
+        lines: [
+          '“The piano and that computer of his are right here in the house, and the campsite out east is where the hiking gear lives. Do have a look around!”',
+        ],
+      },
+    ],
+  };
+}
+
+// ---------------------------------------------------------- guide NPCs
+// Each area guide introduces the zone AND gives the full overview for
+// visitors who don't want to click every object.
+
+export function foresterDialog(): DialogContent {
+  const chrono = [...workExperience].reverse();
+  return {
+    title: 'The Forester',
+    subtitle: 'Keeper of the Career Grove',
+    icon: '🌲',
+    sections: [
+      {
+        lines: [
+          '“Hey there! This grove tells the story of Magnus’ working life — every planted tree is a job. The longer he stayed, the bigger the tree, and the species tells you the industry. Each one has its own sign.”',
+        ],
+      },
+      {
+        heading: 'In a hurry? The whole story:',
+        lines: chrono.map(
+          (item) =>
+            `${item.period} · ${item.organization} — ${roleTitle(item)}${isPartTime(item) ? ' (part-time)' : ''}`,
+        ),
+      },
+      {
+        lines: ['“Wander around and inspect the trees for the details — the pines are just the fence.”'],
+      },
+    ],
+  };
+}
+
+export function mountainGuideDialog(): DialogContent {
+  const chrono = [...education].reverse();
+  return {
+    title: 'The Mountain Guide',
+    subtitle: 'Welcome to Education Mountain',
+    icon: '🏔️',
+    sections: [
+      {
+        lines: [
+          '“Welcome to the mountains! This trail climbs through Magnus’ education — the higher a waymark sits, the higher the degree. The flag at the summit marks his Master of Science.”',
+        ],
+      },
+      {
+        heading: 'The short version, bottom to top:',
+        lines: chrono.map((item) => `${item.period} · ${item.organization} — ${item.title}`),
+      },
+      {
+        lines: ['“Take your time on the switchbacks — and the sign at the very top can teleport you straight home.”'],
+      },
+    ],
+  };
+}
+
+export function gardenerDialog(): DialogContent {
+  return {
+    title: 'The Gardener',
+    subtitle: 'Tender of the Skills Garden',
+    icon: '🌱',
+    sections: [
+      {
+        lines: [
+          '“Everything Magnus knows, we grow right here. The fuller a bed, the stronger the skill — the pots are things still growing, and the rack holds his everyday tools.”',
+        ],
+      },
+      {
+        heading: 'What’s planted in the beds:',
+        lines: gardenBeds.map((bed) => `${bed.name}: ${bed.skills.join(', ')}`),
+      },
+      {
+        heading: 'And around the garden:',
+        lines: [
+          `In the pots: ${pottedPlants.map((plant) => plant.name).join(', ')}`,
+          `On the tool rack: ${rackTools.map((tool) => tool.name).join(', ')}`,
+        ],
+      },
+    ],
+  };
+}
+
+export function hikingBuddyDialog(): DialogContent {
+  return {
+    title: 'The Hiking Buddy',
+    subtitle: 'Warming up by the fire',
+    icon: '🔥',
+    sections: [
+      {
+        lines: [
+          '“Pull up a log! Magnus and I go way back — he loves hiking, and we head out on survival trips together whenever we can get away. Tent, campfire, no screens.”',
+          '“If you want to know what he does when he’s not in the wild: his piano and computer are in the house. His wife can tell you the rest.”',
         ],
       },
     ],

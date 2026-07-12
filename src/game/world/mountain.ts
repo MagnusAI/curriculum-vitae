@@ -3,8 +3,9 @@ import { PROPS, T } from '../atlas';
 import { TILE } from '../constants';
 import { bakeLayers, TilemapData } from '../engine/tilemap';
 import { Entity } from '../entities/entity';
+import { Npc } from '../entities/npc';
 import { Prop } from '../entities/prop';
-import { educationDialog } from '../content/dialogs';
+import { educationDialog, mountainGuideDialog } from '../content/dialogs';
 import { GameAssets, SceneDef } from './scene';
 
 const W = 40;
@@ -165,6 +166,11 @@ export function buildMountain(assets: GameAssets): SceneDef {
       dialog,
     });
   });
+
+  // the mountain guide greets climbers where the trail begins
+  entities.push(
+    new Npc(18 * TILE + 3, 31 * TILE + 4, assets.npcGuide, 'Talk to the mountain guide', mountainGuideDialog()),
+  );
 
   // the summit flag
   prop('flag', 20, 4, {

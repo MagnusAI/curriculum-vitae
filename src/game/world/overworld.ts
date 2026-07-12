@@ -7,11 +7,15 @@ import { playBlip } from '../engine/audio';
 import { bakeLayers, TilemapData } from '../engine/tilemap';
 import { Animal } from '../entities/animal';
 import { Entity } from '../entities/entity';
+import { Npc } from '../entities/npc';
 import { Prop } from '../entities/prop';
 import {
   bedDialog,
   careerDialog,
   forestSignDialog,
+  foresterDialog,
+  gardenerDialog,
+  hikingBuddyDialog,
   hobbyDialog,
   mailboxDialog,
   mountainSignDialog,
@@ -156,6 +160,12 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     dialog: mountainSignDialog(),
   });
 
+  // ================================================ paths between the areas
+  fillTiles(8, 15, 38, 16, T.PATH); // main path: house door → campsite
+  fillTiles(6, 15, 7, 16, T.PATH); // stub under the house door
+  fillTiles(26, 9, 27, 14, T.PATH); // branch north to the mountain entrance
+  fillTiles(6, 17, 7, 23, T.PATH); // branch south into the garden
+
   // ======================================================== house + mailbox
   const houseX = 4 * TILE;
   const houseY = 10 * TILE;
@@ -232,6 +242,8 @@ export function buildOverworld(assets: GameAssets): SceneDef {
   // resident chicken pecking between the beds
   const chickenRun = { x: 4 * TILE, y: 26 * TILE, w: 12 * TILE, h: TILE };
   entities.push(new Animal(8 * TILE, 26 * TILE, assets.chicken, chickenRun, 'Bok?', undefined, () => playBlip(84, 0.07)));
+  // the gardener, tending the beds
+  entities.push(new Npc(10 * TILE + 3, 20 * TILE + 4, assets.npcGardener, 'Talk to the gardener', gardenerDialog()));
 
   // ================================================= campsite (mid-east)
   const campsiteHobby = hobbies.find((h) => h.spot === 'campsite');
@@ -260,6 +272,8 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     interactPrompt: 'Read the campsite sign',
     dialog: campsiteDialog,
   });
+  // the hiking buddy, warming his hands between the fire and the tent
+  entities.push(new Npc(40 * TILE + 2, 13 * TILE + 2, assets.npcHiker, 'Chat with the hiking buddy', hikingBuddyDialog()));
 
   // sheep grazing by the eastern lake
   const meadow = { x: 31 * TILE, y: 7 * TILE + 8, w: 5 * TILE, h: 2 * TILE };
@@ -314,6 +328,8 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     interactPrompt: 'Read the forest sign',
     dialog: forestSignDialog(),
   });
+  // the forester, just inside the grove
+  entities.push(new Npc(33 * TILE + 3, 20 * TILE + 4, assets.npcForester, 'Talk to the forester', foresterDialog()));
 
   // ================================================== borders + decoration
   for (let x = 0; x < W; x++) {

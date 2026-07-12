@@ -2,6 +2,10 @@ import tilesetUrl from '../assets/game/tileset.png';
 import propsUrl from '../assets/game/props.png';
 import playerUrl from '../assets/game/player.png';
 import wifeUrl from '../assets/game/wife.png';
+import npcHikerUrl from '../assets/game/npc_hiker.png';
+import npcForesterUrl from '../assets/game/npc_forester.png';
+import npcGardenerUrl from '../assets/game/npc_gardener.png';
+import npcGuideUrl from '../assets/game/npc_guide.png';
 import dogUrl from '../assets/game/dog.png';
 import chickenUrl from '../assets/game/chicken.png';
 import sheepUrl from '../assets/game/sheep.png';
@@ -60,6 +64,10 @@ export class Game {
       props: propsUrl,
       player: playerUrl,
       wife: wifeUrl,
+      npcHiker: npcHikerUrl,
+      npcForester: npcForesterUrl,
+      npcGardener: npcGardenerUrl,
+      npcGuide: npcGuideUrl,
       dog: dogUrl,
       chicken: chickenUrl,
       sheep: sheepUrl,
@@ -72,6 +80,10 @@ export class Game {
       props: images.props,
       player: { image: images.player, frameW: 16, frameH: 24 },
       wife: { image: images.wife, frameW: 16, frameH: 24 },
+      npcHiker: { image: images.npcHiker, frameW: 16, frameH: 24 },
+      npcForester: { image: images.npcForester, frameW: 16, frameH: 24 },
+      npcGardener: { image: images.npcGardener, frameW: 16, frameH: 24 },
+      npcGuide: { image: images.npcGuide, frameW: 16, frameH: 24 },
       dog: { image: images.dog, frameW: 16, frameH: 16 },
       chicken: { image: images.chicken, frameW: 16, frameH: 16 },
       sheep: { image: images.sheep, frameW: 16, frameH: 16 },

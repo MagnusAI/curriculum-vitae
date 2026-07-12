@@ -1876,6 +1876,51 @@ addProp('rug', 48, 32, drawRug);
 save('props.png', propsImg);
 save('player.png', makePlayerSheet(PAL_PLAYER));
 save('wife.png', makeWifeSheet());
+// guide NPCs — palette swaps of the player template
+save(
+  'npc_hiker.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#8a6b3a'), // sandy hair
+    T: hex('#d97b29'), // orange fleece
+    t: hex('#b56320'),
+    P: hex('#5a6242'), // olive trousers
+    p: hex('#485038'),
+  }),
+);
+save(
+  'npc_forester.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#3a2c1e'), // dark hair
+    T: hex('#3e7d46'), // forest green
+    t: hex('#2f6136'),
+    P: hex('#5a4632'), // bark brown
+    p: hex('#483828'),
+  }),
+);
+save(
+  'npc_gardener.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#c9a55a'), // straw blond
+    T: hex('#8fae3a'), // leafy green
+    t: hex('#748c2e'),
+    P: hex('#4f74b8'), // denim
+    p: hex('#3d5c96'),
+  }),
+);
+save(
+  'npc_guide.png',
+  makePlayerSheet({
+    ...PAL_PLAYER,
+    H: hex('#2b2018'), // black hair
+    T: hex('#c0392b'), // red alpine jacket
+    t: hex('#96271c'),
+    P: hex('#5a5e66'), // gray trousers
+    p: hex('#484c54'),
+  }),
+);
 save('dog.png', makeDogSheet());
 save('chicken.png', makeAnimalSheet(CHICKEN_A, CHICKEN_B));
 save('sheep.png', makeAnimalSheet(SHEEP_A, SHEEP_B));
