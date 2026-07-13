@@ -13,6 +13,7 @@ export interface GameAssets {
   npcForester: Spritesheet;
   npcGardener: Spritesheet;
   npcGuide: Spritesheet;
+  robot: Spritesheet;
   dog: Spritesheet;
   chicken: Spritesheet;
   sheep: Spritesheet;

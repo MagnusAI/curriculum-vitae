@@ -256,6 +256,23 @@ export function hikingBuddyDialog(): DialogContent {
   };
 }
 
+export function robotDialog(): DialogContent {
+  return {
+    title: 'The Cleaning Robot',
+    subtitle: 'Beep boop — tidying up',
+    icon: '🤖',
+    sections: [
+      {
+        lines: [
+          '“*whirr* Oh, a visitor! I keep the house tidy while Magnus tinkers away.”',
+          'Magnus loves playing around with robots and AI. His Master’s thesis was in robotics, and he spends a lot of time experimenting with AI agents.',
+          '“Fun fact: this entire application was actually built while testing what AI agents can do. I might be one of his little experiments too. Beep.”',
+        ],
+      },
+    ],
+  };
+}
+
 export function bookshelfDialog(): DialogContent {
   return {
     title: 'The Bookshelf',
