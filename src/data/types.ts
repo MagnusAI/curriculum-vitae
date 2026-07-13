@@ -8,6 +8,8 @@ export interface TimelineItem {
   period: string;
   description?: string[];
   type: 'work' | 'education';
+  // Shorter heading used on the in-world sign/waymark; overviews keep `title`.
+  signTitle?: string;
   // Industry of the employer — controls the tree species in the Career Forest.
   sector?: Sector;
   defaultExpanded?: boolean;

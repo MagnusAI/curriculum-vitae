@@ -5,13 +5,13 @@ export const hobbies: Hobby[] = [
   {
     name: "Hiking & Survival",
     description:
-      "I love hiking and survival trips — sleeping in a tent, cooking over a fire, and spending real time outdoors away from screens.",
+      "I love hiking and survival trips — visiting amazing places, sleeping in a tent, cooking over a fire, and spending real time outdoors away from screens.",
     spot: "campsite",
   },
   {
     name: "Music & Piano",
     description:
-      "Playing the piano is one of my favourite ways to unwind — mostly classical pieces, occasionally game soundtracks.",
+      "Playing the piano is one of my favourite ways to unwind — exclusively pieces that don't require singing.",
     spot: "piano",
   },
   {

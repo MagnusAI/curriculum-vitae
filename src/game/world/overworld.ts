@@ -21,7 +21,6 @@ import {
   mountainSignDialog,
   potDialog,
   toolRackDialog,
-  welcomeDialog,
   yardSignDialog,
 } from '../content/dialogs';
 import { tenureMonths, tenureTreeSize } from '../content/tenure';
@@ -180,13 +179,6 @@ export function buildOverworld(assets: GameAssets): SceneDef {
     dialog: mailboxDialog(),
   });
 
-  // welcome sign near the spawn, in the middle of the open meadow
-  prop('sign', 22, 13, {
-    feet: { ox: 0, oy: 6, w: 14, h: 10 },
-    interactPrompt: 'Read sign',
-    dialog: welcomeDialog(),
-  });
-
   // ============================================ skills corner (south-west)
   // tool rack below the house
   prop('toolrack', 4, 17, {
@@ -248,7 +240,7 @@ export function buildOverworld(assets: GameAssets): SceneDef {
   // ================================================= campsite (mid-east)
   const campsiteHobby = hobbies.find((h) => h.spot === 'campsite');
   const campsiteDialog = campsiteHobby
-    ? hobbyDialog(campsiteHobby, 'Curious about the rest? My piano and computer are inside the house — go have a look!')
+    ? hobbyDialog(campsiteHobby, 'Curious about the rest? Head over to the house and have a look around!')
     : undefined;
   fillTiles(38, 12, 44, 15, T.PATH); // the camp clearing
   entities.push(

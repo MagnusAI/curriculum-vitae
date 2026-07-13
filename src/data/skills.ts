@@ -8,12 +8,12 @@ export const gardenBeds: GardenBed[] = [
   {
     name: "Frontend",
     proficiency: 3,
-    skills: ["React", "TypeScript", "Next.js"],
+    skills: ["React", "JavaScript", "TypeScript", "Next.js"],
   },
   {
     name: "Backend",
     proficiency: 3,
-    skills: ["Java", "Kotlin", "Node.js", "C#", "Python"],
+    skills: ["TypeScript", "Java", "Kotlin", "Node.js", "C#", "Python"],
   },
   {
     name: "Cloud & DevOps",
