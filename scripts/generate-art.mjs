@@ -1819,6 +1819,59 @@ function makeAnimalSheet(a, b) {
   return img;
 }
 
+// Cleaning robot — a little utility bot that trundles around the house.
+// Two 16x16 frames (roams + flips like an animal); frame B blinks, swaps
+// its status light and kicks up a dust puff.
+function drawRobotFrame(img, ox, oy, { blink, light, dust }) {
+  const O = C.outline;
+  const light1 = hex('#cdd2d6');
+  const mid = hex('#9aa0a6');
+  const dark = hex('#6e747a');
+  const screen = hex('#14233f');
+  const eye = hex('#5ad4e8');
+  const wheel = hex('#3a332e');
+  const clear = [0, 0, 0, 0];
+  // antenna
+  img.rect(ox + 8, oy + 1, 1, 2, dark);
+  img.set(ox + 8, oy, light);
+  // outline block then rounded corners removed
+  img.rect(ox + 2, oy + 3, 12, 11, O);
+  img.set(ox + 2, oy + 3, clear);
+  img.set(ox + 13, oy + 3, clear);
+  img.set(ox + 2, oy + 13, clear);
+  img.set(ox + 13, oy + 13, clear);
+  // body with top highlight / bottom shade
+  img.rect(ox + 3, oy + 4, 10, 9, mid);
+  img.rect(ox + 3, oy + 4, 10, 2, light1);
+  img.rect(ox + 3, oy + 11, 10, 2, dark);
+  // yellow trim under the screen
+  img.rect(ox + 3, oy + 10, 10, 1, hex('#f0c33c'));
+  // screen with two eyes (blink = 1px tall)
+  img.rect(ox + 4, oy + 5, 8, 4, screen);
+  img.rect(ox + 5, oy + 6, 2, blink ? 1 : 2, eye);
+  img.rect(ox + 9, oy + 6, 2, blink ? 1 : 2, eye);
+  // treads
+  img.rect(ox + 3, oy + 14, 3, 2, wheel);
+  img.rect(ox + 10, oy + 14, 3, 2, wheel);
+  img.set(ox + 2, oy + 15, O);
+  img.set(ox + 6, oy + 15, O);
+  img.set(ox + 9, oy + 15, O);
+  img.set(ox + 13, oy + 15, O);
+  // dust puff while moving
+  if (dust) {
+    img.set(ox + 1, oy + 13, light1);
+    img.set(ox + 0, oy + 14, mid);
+    img.set(ox + 2, oy + 14, light1);
+  }
+}
+
+function makeRobotSheet() {
+  const img = new Img(32, 16);
+  drawRobotFrame(img, 0, 0, { blink: false, light: hex('#e35d4f'), dust: false });
+  drawRobotFrame(img, 16, 0, { blink: true, light: hex('#7ee06a'), dust: true });
+  return img;
+}
+
 // ============================================================ build everything
 save('tileset.png', drawTileset());
 
@@ -1921,6 +1974,7 @@ save(
     p: hex('#484c54'),
   }),
 );
+save('robot.png', makeRobotSheet());
 save('dog.png', makeDogSheet());
 save('chicken.png', makeAnimalSheet(CHICKEN_A, CHICKEN_B));
 save('sheep.png', makeAnimalSheet(SHEEP_A, SHEEP_B));

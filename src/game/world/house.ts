@@ -1,12 +1,13 @@
 import { hobbies } from '../../data/hobbies';
 import { PROPS, T } from '../atlas';
 import { TILE } from '../constants';
-import { playTune } from '../engine/audio';
+import { playBlip, playTune } from '../engine/audio';
 import { bakeLayers, TilemapData } from '../engine/tilemap';
+import { Animal } from '../entities/animal';
 import { Entity } from '../entities/entity';
 import { Npc } from '../entities/npc';
 import { Prop } from '../entities/prop';
-import { bookshelfDialog, hobbyDialog, wifeDialog } from '../content/dialogs';
+import { bookshelfDialog, hobbyDialog, robotDialog, wifeDialog } from '../content/dialogs';
 import { PIANO_TUNE } from '../content/pianoTune';
 import { GameAssets, SceneDef } from './scene';
 
@@ -105,6 +106,13 @@ export function buildHouse(assets: GameAssets): SceneDef {
 
   // the wife, near the kitchen
   entities.push(new Npc(170, 96, assets.wife, 'Talk to Wife', wifeDialog()));
+
+  // the cleaning robot, trundling around the open floor (reuses the
+  // wandering-animal behaviour; it roves and flips as it "cleans")
+  const robotRoam = { x: 52, y: 104, w: 108, h: 32 };
+  entities.push(
+    new Animal(96, 118, assets.robot, robotRoam, 'Greet the robot', robotDialog(), () => playBlip(72, 0.05)),
+  );
 
   const map: TilemapData = { w: W, h: H, layers: [ground], solid };
 

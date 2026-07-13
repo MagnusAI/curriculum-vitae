@@ -16,9 +16,9 @@ export function StartScreen({ onStart, isTouch }: StartScreenProps) {
         <h1>Magnus Arnild</h1>
         <h2>Software Engineer · Interactive CV</h2>
         <p>
-          Welcome to my little pixel world! Walk around as me: the forest holds my education, the
-          fields grow my skills, the meadow keeps my hobbies — and my wife, piano and computer are
-          in the house.
+          Welcome to my little pixel-world CV! Walk around and find out about me: the forest holds
+          my career, the garden grows my skills, the mountains represent my education — and my
+          hobbies are spread all over the world.
         </p>
         <div className="start-controls">
           {isTouch ? (

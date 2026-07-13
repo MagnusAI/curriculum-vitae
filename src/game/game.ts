@@ -6,6 +6,7 @@ import npcHikerUrl from '../assets/game/npc_hiker.png';
 import npcForesterUrl from '../assets/game/npc_forester.png';
 import npcGardenerUrl from '../assets/game/npc_gardener.png';
 import npcGuideUrl from '../assets/game/npc_guide.png';
+import robotUrl from '../assets/game/robot.png';
 import dogUrl from '../assets/game/dog.png';
 import chickenUrl from '../assets/game/chicken.png';
 import sheepUrl from '../assets/game/sheep.png';
@@ -68,6 +69,7 @@ export class Game {
       npcForester: npcForesterUrl,
       npcGardener: npcGardenerUrl,
       npcGuide: npcGuideUrl,
+      robot: robotUrl,
       dog: dogUrl,
       chicken: chickenUrl,
       sheep: sheepUrl,
@@ -84,6 +86,7 @@ export class Game {
       npcForester: { image: images.npcForester, frameW: 16, frameH: 24 },
       npcGardener: { image: images.npcGardener, frameW: 16, frameH: 24 },
       npcGuide: { image: images.npcGuide, frameW: 16, frameH: 24 },
+      robot: { image: images.robot, frameW: 16, frameH: 16 },
       dog: { image: images.dog, frameW: 16, frameH: 16 },
       chicken: { image: images.chicken, frameW: 16, frameH: 16 },
       sheep: { image: images.sheep, frameW: 16, frameH: 16 },

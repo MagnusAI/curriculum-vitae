@@ -1,6 +1,5 @@
 import { education } from '../../data/education';
-import { hobbies } from '../../data/hobbies';
-import { profileData, summary } from '../../data/profile';
+import { profileData } from '../../data/profile';
 import { gardenBeds, pottedPlants, rackTools } from '../../data/skills';
 import { workExperience } from '../../data/work-experience';
 import { GardenBed, Hobby, PottedPlant, RackTool, TimelineItem } from '../../data/types';
@@ -26,7 +25,7 @@ const SECTOR_LABEL: Record<string, string> = {
 // ---------------------------------------------------------------- education
 export function educationDialog(item: TimelineItem): DialogContent {
   return {
-    title: item.title,
+    title: item.signTitle ?? item.title,
     subtitle: item.organization,
     icon: '🎓',
     sections: [
@@ -145,17 +144,20 @@ export function wifeDialog(): DialogContent {
       {
         lines: [
           '“Oh, you must be here about Magnus! We are married and live here together — along with our lovely dog, who follows him around whenever he gets the chance.”',
-          summary,
+          '“Magnus is a Software Engineer with wide-ranging knowledge of building, fixing, and maintaining almost anything. He can fix just about everything around the house, too.”',
         ],
       },
       {
         heading: 'When he is not working…',
-        lines: hobbies.map((hobby) => `${hobby.name} — ${hobby.description}`),
+        lines: [
+          'He loves hiking & survival trips — spending real time outdoors, away from screens.',
+          'He plays wonderful music on the piano — one of his favourite ways to unwind. He learned to play all by himself.',
+          'He plays games with friends and tinkers with programming on his computer — video games and hobby projects; building small things for fun is how this very pixel world came to be.',
+          'He also tinkers with hardware and 3D printing.',
+        ],
       },
       {
-        lines: [
-          '“The piano and that computer of his are right here in the house, and the campsite out east is where the hiking gear lives. Do have a look around!”',
-        ],
+        lines: ['“Take a look around the house to find out more about his hobbies.”'],
       },
     ],
   };
@@ -178,7 +180,7 @@ export function foresterDialog(): DialogContent {
         ],
       },
       {
-        heading: 'In a hurry? The whole story:',
+        heading: "In a hurry? Here's the overview:",
         lines: chrono.map(
           (item) =>
             `${item.period} · ${item.organization} — ${roleTitle(item)}${isPartTime(item) ? ' (part-time)' : ''}`,
@@ -200,7 +202,7 @@ export function mountainGuideDialog(): DialogContent {
     sections: [
       {
         lines: [
-          '“Welcome to the mountains! This trail climbs through Magnus’ education — the higher a waymark sits, the higher the degree. The flag at the summit marks his Master of Science.”',
+          '“Welcome to the mountains! This trail climbs through Magnus’ education — the flag at the summit marks his Master of Science.”',
         ],
       },
       {
@@ -248,8 +250,25 @@ export function hikingBuddyDialog(): DialogContent {
     sections: [
       {
         lines: [
-          '“Pull up a log! Magnus and I go way back — he loves hiking, and we head out on survival trips together whenever we can get away. Tent, campfire, no screens.”',
-          '“If you want to know what he does when he’s not in the wild: his piano and computer are in the house. His wife can tell you the rest.”',
+          '“Pull up a log! Magnus and I go way back — he loves hiking, and we head out on survival trips together whenever we can get away. Tents, campfire, no screens.”',
+          '“If you want to know what he does when he’s not in the wild, head to his house — his wife can tell you the rest.”',
+        ],
+      },
+    ],
+  };
+}
+
+export function robotDialog(): DialogContent {
+  return {
+    title: 'The Cleaning Robot',
+    subtitle: 'Beep boop — tidying up',
+    icon: '🤖',
+    sections: [
+      {
+        lines: [
+          '“*whirr* Oh, a visitor! I keep the house tidy while Magnus tinkers away.”',
+          'Magnus loves playing around with robots and AI. His Master’s thesis was in robotics, and he spends a lot of time experimenting with AI agents.',
+          '“Fun fact: this entire application was actually built while testing what AI agents can do. I might be one of his little experiments too. Beep.”',
         ],
       },
     ],
@@ -259,13 +278,13 @@ export function hikingBuddyDialog(): DialogContent {
 export function bookshelfDialog(): DialogContent {
   return {
     title: 'The Bookshelf',
-    subtitle: 'About this CV',
+    subtitle: 'What Magnus reads',
     icon: '📚',
     sections: [
       {
         lines: [
-          'This interactive CV is hand-built with React, TypeScript and a custom HTML5 canvas engine — no game framework.',
-          'Even the pixel art is generated from code. Prefer paper? Grab the PDF from the menu.',
+          'I read a lot — both to learn and just for fun. Most of my physical books are educational, and I use them to keep my skills sharp.',
+          'When I read to relax, it is mostly fantasy and fiction.',
         ],
       },
     ],
@@ -273,26 +292,6 @@ export function bookshelfDialog(): DialogContent {
 }
 
 // -------------------------------------------------- zone grammar legends
-export function welcomeDialog(): DialogContent {
-  return {
-    title: 'Welcome, visitor!',
-    subtitle: "Magnus Arnild's world",
-    icon: '🗺️',
-    sections: [
-      {
-        lines: [
-          'You are controlling Magnus. Walk around and poke at things!',
-          '🏔️ North — take the path between the lakes to climb Education Mountain',
-          '🌲 South-east — the Career Forest: one planted tree per job',
-          '🌱 South-west — the garden: skills growing in beds, pots and on the tool rack',
-          '🏕️ East — the campsite',
-          '🏠 And do step inside the house.',
-        ],
-      },
-    ],
-  };
-}
-
 export function mountainSignDialog(): DialogContent {
   return {
     title: 'Education Mountain',
@@ -302,7 +301,7 @@ export function mountainSignDialog(): DialogContent {
       {
         lines: [
           'Education is the foundation everything else stands on — so it gets a mountain.',
-          'Follow this path between the lakes and take the winding trail up. The higher a waymark sits, the higher the education — the flag at the summit marks the master’s degree.',
+          'Follow this path between the lakes, take the winding trail to the top, and read the signs along the way.',
         ],
       },
     ],
@@ -320,8 +319,6 @@ export function forestSignDialog(): DialogContent {
           'Inside this ring of pines stands one planted tree per job, each with its own sign.',
           'Read them top row first, left to right — oldest job to newest.',
           'Bigger tree = longer tenure (sapling → young → mature).',
-          'Species = industry: white-barked birch is finance, broadleaf oak is software, 🍎 fruit tree is retail.',
-          'The pines themselves are just the fence — only signed trees talk.',
         ],
       },
     ],
