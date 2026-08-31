@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Game } from './game/game';
 import { DialogAction, DialogContent, SceneName } from './game/events';
+import { CvContent } from './ui/CvContent';
 import { DialogPanel } from './ui/DialogPanel';
 import { GameCanvas } from './ui/GameCanvas';
 import { HUD } from './ui/HUD';
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <div className="game-root">
+      <CvContent />
       <GameCanvas onGame={setGame} />
       {started && <HUD prompt={dialog ? null : prompt} scene={scene} isTouch={isTouch} />}
       {started && isTouch && !dialog && game && <TouchControls virtual={game.virtualInput} />}
