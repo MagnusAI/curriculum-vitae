@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { DialogAction, DialogContent } from '../game/events';
+import { useFocusTrap } from './useFocusTrap';
 
 interface DialogPanelProps {
   content: DialogContent;
@@ -12,9 +13,9 @@ const CLOSE_KEYS = new Set(['Escape', 'KeyE', 'Enter', 'Space']);
 
 export function DialogPanel({ content, onClose, onAction, isTouch }: DialogPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, true);
 
   useEffect(() => {
-    panelRef.current?.focus();
     const onKeyDown = (e: KeyboardEvent) => {
       if (CLOSE_KEYS.has(e.code)) {
         e.preventDefault();

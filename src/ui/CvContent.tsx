@@ -5,6 +5,7 @@ import { profileData, summary } from '../data/profile';
 import { gardenBeds, pottedPlants, rackTools } from '../data/skills';
 import { workExperience } from '../data/work-experience';
 import { TimelineItem } from '../data/types';
+import { useFocusTrap } from './useFocusTrap';
 
 interface CvContentProps {
   // false (default): the always-mounted, screen-reader/find-in-page-only
@@ -36,6 +37,7 @@ interface CvContentProps {
 // different reader.
 export function CvContent({ visible = false, onClose }: CvContentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(rootRef, visible);
 
   // Escape-to-close, matching DialogPanel's existing pattern. Deliberately
   // not E/Enter/Space too: those are the game's interact keys, and #17's
@@ -49,14 +51,6 @@ export function CvContent({ visible = false, onClose }: CvContentProps) {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [visible, onClose]);
-
-  // Also matching DialogPanel: move focus into the panel on open. Without
-  // this, StartScreen's autoFocus'd Explore button - now covered but still
-  // in the DOM underneath - keeps keyboard focus, and a stray Enter/Space
-  // would start the game invisibly behind what looks like the CV panel.
-  useEffect(() => {
-    if (visible) rootRef.current?.focus();
-  }, [visible]);
 
   return (
     <div ref={rootRef} className={visible ? 'cv-visible' : 'sr-only'} tabIndex={visible ? -1 : undefined}>

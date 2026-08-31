@@ -118,6 +118,41 @@ describe('CvContent', () => {
       expect(document.activeElement).not.toBe(outsideButton);
       outsideButton.remove();
     });
+
+    // #19: the close button is the panel's only focusable element, so it is
+    // both first and last - Tab and Shift+Tab should each keep focus on it
+    // rather than escaping to a control hidden behind the panel (e.g.
+    // StartScreen's own buttons, still present in the DOM underneath).
+    // useFocusTrap.test.ts covers the trap's general wrapping behaviour;
+    // this just proves it's wired up here, in CvContent's own real shape.
+    it('traps Tab on its one focusable element (the close button)', () => {
+      render(<CvContent visible onClose={vi.fn()} />);
+      const closeBtn = screen.getByRole('button', { name: 'Close CV' });
+
+      // Initial focus lands on the panel itself (asserted above); once the
+      // close button has focus - however it got there - Tab/Shift+Tab must
+      // both keep it there rather than escaping to a hidden control.
+      closeBtn.focus();
+      fireEvent.keyDown(window, { code: 'Tab' });
+      expect(document.activeElement).toBe(closeBtn);
+
+      fireEvent.keyDown(window, { code: 'Tab', shiftKey: true });
+      expect(document.activeElement).toBe(closeBtn);
+    });
+
+    it('restores focus to "Read the CV" (or whatever opened it) when closed', () => {
+      const opener = document.createElement('button');
+      opener.textContent = 'Read the CV';
+      document.body.appendChild(opener);
+      opener.focus();
+
+      const { rerender } = render(<CvContent visible onClose={vi.fn()} />);
+      expect(document.activeElement).not.toBe(opener);
+
+      rerender(<CvContent visible={false} onClose={vi.fn()} />);
+      expect(document.activeElement).toBe(opener);
+      opener.remove();
+    });
   });
 
   it('ignores Escape when not visible (the always-mounted #8 instance is not a dialog)', () => {
