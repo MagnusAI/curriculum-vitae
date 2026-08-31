@@ -105,6 +105,15 @@ describe('CvContent', () => {
       ]);
     });
 
+    // #26: the CV is now the landing view, so the PDF (the recruiter's
+    // documented escape hatch) must be reachable from here directly rather
+    // than only from StartScreen.
+    it('offers a PDF download button, not disabled by default', () => {
+      render(<CvContent visible onClose={vi.fn()} />);
+      const pdfButton = screen.getByRole('button', { name: /download as pdf/i }) as HTMLButtonElement;
+      expect(pdfButton.disabled).toBe(false);
+    });
+
     it('moves focus into the panel on open, away from whatever was focused before', () => {
       const outsideButton = document.createElement('button');
       outsideButton.textContent = 'outside, focused before the panel opens';
@@ -119,25 +128,26 @@ describe('CvContent', () => {
       outsideButton.remove();
     });
 
-    // #19: the close button is the panel's only focusable element, so it is
-    // both first and last - Tab and Shift+Tab should each keep focus on it
+    // #19 (updated by #26, which added the PDF button as a second focusable
+    // element): Tab/Shift+Tab must wrap between the panel's two focusable
+    // controls - the close button (first) and the PDF button (last) -
     // rather than escaping to a control hidden behind the panel (e.g.
     // StartScreen's own buttons, still present in the DOM underneath).
     // useFocusTrap.test.ts covers the trap's general wrapping behaviour;
     // this just proves it's wired up here, in CvContent's own real shape.
-    it('traps Tab on its one focusable element (the close button)', () => {
+    it('traps Tab between its close and PDF buttons', () => {
       render(<CvContent visible onClose={vi.fn()} />);
       const closeBtn = screen.getByRole('button', { name: 'Close CV' });
+      const pdfBtn = screen.getByRole('button', { name: /download as pdf/i });
 
-      // Initial focus lands on the panel itself (asserted above); once the
-      // close button has focus - however it got there - Tab/Shift+Tab must
-      // both keep it there rather than escaping to a hidden control.
-      closeBtn.focus();
+      // Tab forward from the last focusable element wraps to the first.
+      pdfBtn.focus();
       fireEvent.keyDown(window, { code: 'Tab' });
       expect(document.activeElement).toBe(closeBtn);
 
+      // Shift+Tab backward from the first focusable element wraps to the last.
       fireEvent.keyDown(window, { code: 'Tab', shiftKey: true });
-      expect(document.activeElement).toBe(closeBtn);
+      expect(document.activeElement).toBe(pdfBtn);
     });
 
     it('restores focus to "Read the CV" (or whatever opened it) when closed', () => {
