@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   checks:
-    name: Lint, type-check and build
+    name: Lint, type-check, test and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,6 +39,10 @@ jobs:
       - name: Type-check
         if: ${{ !cancelled() }}
         run: npm run typecheck
+
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: npm run test
 
       - name: Build
         if: ${{ !cancelled() }}
