@@ -257,14 +257,14 @@
   margin-bottom: 16px;
 }
 
-.start-panel h1 {
+.start-panel h2 {
   font-size: 18px;
   margin: 0 0 10px;
   color: var(--accent);
   line-height: 1.5;
 }
 
-.start-panel h2 {
+.start-panel h3 {
   font-size: 10px;
   margin: 0 0 20px;
   color: #7a5230;
