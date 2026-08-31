@@ -19,9 +19,9 @@ export function StartScreen({ onStart, onViewCv, isTouch }: StartScreenProps) {
         <h2>Magnus Arnild</h2>
         <h3>Software Engineer · Interactive CV</h3>
         <p>
-          Welcome to my little pixel-world CV! Walk around and find out about me: the forest holds
-          my career, the garden grows my skills, the mountains represent my education — and my
-          hobbies are spread all over the world.
+          You've stepped out of the CV and into the pixel world it's built from. Walk around and
+          find out more: the forest holds my career, the garden grows my skills, the mountains
+          represent my education — and my hobbies are spread all over the world.
         </p>
         <div className="start-controls">
           {isTouch ? (
@@ -48,8 +48,8 @@ export function StartScreen({ onStart, onViewCv, isTouch }: StartScreenProps) {
           </button>
         </div>
         <p className="sr-only">
-          This page is an interactive game. If you'd rather not play, use "Read the CV" to see it
-          on this page, or download it as a PDF.
+          This is an optional interactive game mode, reached by leaving the main CV page. Use
+          "Read the CV" to go back to it, or download it as a PDF from here.
         </p>
       </div>
     </div>
