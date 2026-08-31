@@ -322,9 +322,15 @@
 .cv-visible h2,
 .cv-visible h3,
 .cv-visible p,
-.cv-visible section {
+.cv-visible section,
+.cv-visible .cv-pdf-button {
   max-width: 640px;
   margin-inline: auto;
+}
+
+.cv-visible .cv-pdf-button {
+  display: block;
+  margin-block: 4px 8px;
 }
 
 .cv-visible h1 {

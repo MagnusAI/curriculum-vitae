@@ -15,7 +15,11 @@ function App() {
   const [dialog, setDialog] = useState<DialogContent | null>(null);
   const [prompt, setPrompt] = useState<string | null>(null);
   const [scene, setScene] = useState<SceneName>('overworld');
-  const [cvVisible, setCvVisible] = useState(false);
+  // #26: the CV is the landing view, visible on load with no click-through -
+  // closing it (or Escape) reveals the game underneath instead of the other
+  // way around, matching backlog-conventions.md's "readable without playing"
+  // direction while keeping the free-roam game itself untouched and reachable.
+  const [cvVisible, setCvVisible] = useState(true);
 
   const isTouch = useMemo(
     () =>

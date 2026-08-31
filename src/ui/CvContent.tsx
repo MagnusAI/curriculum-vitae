@@ -5,6 +5,7 @@ import { profileData, summary } from '../data/profile';
 import { gardenBeds, pottedPlants, rackTools } from '../data/skills';
 import { workExperience } from '../data/work-experience';
 import { TimelineItem } from '../data/types';
+import { useDownloadPdf } from './useDownloadPdf';
 import { useFocusTrap } from './useFocusTrap';
 
 interface CvContentProps {
@@ -25,7 +26,9 @@ interface CvContentProps {
 // representation outside the canvas at all - unreachable by a screen
 // reader, invisible to find-in-page, and absent from the DOM for anything
 // that doesn't play (#8). Passing `visible` additionally makes it seeable
-// on screen without playing at all (#17).
+// on screen without playing at all (#17) - and App.tsx now renders it
+// `visible` by default, making this the site's landing view rather than
+// something reached by clicking through a game (#26).
 //
 // This deliberately reads straight from src/data/*.ts rather than through
 // game/content/dialogs.ts's mapper functions (careerDialog, educationDialog,
@@ -38,6 +41,7 @@ interface CvContentProps {
 export function CvContent({ visible = false, onClose }: CvContentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   useFocusTrap(rootRef, visible);
+  const { busy, download } = useDownloadPdf();
 
   // Escape-to-close, matching DialogPanel's existing pattern. Deliberately
   // not E/Enter/Space too: those are the game's interact keys, and #17's
@@ -64,6 +68,15 @@ export function CvContent({ visible = false, onClose }: CvContentProps) {
       </h1>
       <p>{profileData.bio}</p>
       <p>{summary}</p>
+      {visible && (
+        // #26: this is now the landing view, so the PDF (the recruiter's
+        // documented escape hatch, see backlog-conventions.md) must be
+        // reachable from here directly - reusing StartScreen's own
+        // useDownloadPdf hook rather than a second copy of the same logic.
+        <button className="pixel-button secondary cv-pdf-button" onClick={download} disabled={busy}>
+          {busy ? 'Baking…' : '📄 Download as PDF'}
+        </button>
+      )}
 
       <h2>Work Experience</h2>
       {workExperience.map((item) => (
