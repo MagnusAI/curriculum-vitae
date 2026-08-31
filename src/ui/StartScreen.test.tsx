@@ -27,4 +27,20 @@ describe('StartScreen', () => {
     expect(onStart).toHaveBeenCalledOnce();
     expect(onViewCv).not.toHaveBeenCalled();
   });
+
+  // #28: since #26 made the CV the default landing view, this screen is reached
+  // by leaving it rather than being the site's front door - its copy should say so.
+  describe('copy reflects that the CV, not this screen, is the landing view', () => {
+    it('describes itself as reached from the CV, not as the entry point', () => {
+      render(<StartScreen onStart={vi.fn()} onViewCv={vi.fn()} isTouch={false} />);
+      expect(screen.getByText(/stepped out of the cv/i)).toBeTruthy();
+      expect(screen.queryByText(/welcome to my little pixel-world cv/i)).toBeNull();
+    });
+
+    it('tells a screen reader user "Read the CV" goes back, not that it is the non-playing option', () => {
+      render(<StartScreen onStart={vi.fn()} onViewCv={vi.fn()} isTouch={false} />);
+      expect(screen.getByText(/go back to it/i)).toBeTruthy();
+      expect(screen.queryByText(/this page is an interactive game/i)).toBeNull();
+    });
+  });
 });
