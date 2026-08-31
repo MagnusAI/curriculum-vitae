@@ -11,5 +11,6 @@ export default defineConfig({
   base: '/curriculum-vitae/', // Base path for GitHub Pages
   test: {
     environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
   },
 })

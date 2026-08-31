@@ -13,8 +13,10 @@ export function StartScreen({ onStart, isTouch }: StartScreenProps) {
     <div className="start-screen">
       <div className="pixel-panel start-panel">
         <img className="start-photo" src={profileData.imageUrl} alt="Photo of Magnus Arnild" />
-        <h1>Magnus Arnild</h1>
-        <h2>Software Engineer · Interactive CV</h2>
+        {/* h2/h3, not h1/h2: CvContent (always mounted, see App.tsx) owns the
+            page's one h1, and this panel unmounts once the game starts. */}
+        <h2>Magnus Arnild</h2>
+        <h3>Software Engineer · Interactive CV</h3>
         <p>
           Welcome to my little pixel-world CV! Walk around and find out about me: the forest holds
           my career, the garden grows my skills, the mountains represent my education — and my
