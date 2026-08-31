@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Read-only. This workflow validates a proposed change; it never publishes one.
+permissions:
+  contents: read
+
+# A new push to the same pull request supersedes the run already in flight.
+concurrency:
+  group: "ci-${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, type-check and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Each check is its own step so a failure names which one broke,
+      # and the remaining checks still report rather than being masked.
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        if: ${{ !cancelled() }}
+        run: npm run typecheck
+
+      - name: Build
+        if: ${{ !cancelled() }}
+        run: npm run build
