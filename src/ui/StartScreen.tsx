@@ -3,10 +3,11 @@ import { useDownloadPdf } from './useDownloadPdf';
 
 interface StartScreenProps {
   onStart: () => void;
+  onViewCv: () => void;
   isTouch: boolean;
 }
 
-export function StartScreen({ onStart, isTouch }: StartScreenProps) {
+export function StartScreen({ onStart, onViewCv, isTouch }: StartScreenProps) {
   const { busy, download } = useDownloadPdf();
 
   return (
@@ -39,13 +40,16 @@ export function StartScreen({ onStart, isTouch }: StartScreenProps) {
           <button className="pixel-button" onClick={onStart} autoFocus>
             ▶ Explore
           </button>
+          <button className="pixel-button secondary" onClick={onViewCv}>
+            📖 Read the CV
+          </button>
           <button className="pixel-button secondary" onClick={download} disabled={busy}>
             {busy ? 'Baking…' : '📄 Boring PDF version'}
           </button>
         </div>
         <p className="sr-only">
-          This page is an interactive game. If you prefer a standard document, use the download
-          button to get the CV as a PDF.
+          This page is an interactive game. If you'd rather not play, use "Read the CV" to see it
+          on this page, or download it as a PDF.
         </p>
       </div>
     </div>

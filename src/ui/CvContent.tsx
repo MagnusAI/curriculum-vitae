@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { education } from '../data/education';
 import { hobbies } from '../data/hobbies';
 import { profileData, summary } from '../data/profile';
@@ -5,11 +6,25 @@ import { gardenBeds, pottedPlants, rackTools } from '../data/skills';
 import { workExperience } from '../data/work-experience';
 import { TimelineItem } from '../data/types';
 
-// Always-mounted, visually-hidden text rendering of the CV. The game canvas
-// is aria-hidden and its dialogs only exist once a visitor has walked to and
-// interacted with something, so without this the CV has no representation
-// outside the canvas at all - unreachable by a screen reader, invisible to
-// find-in-page, and absent from the DOM for anything that doesn't play.
+interface CvContentProps {
+  // false (default): the always-mounted, screen-reader/find-in-page-only
+  // rendering from #8 - unchanged, no close button, identical output.
+  // true: the same content, same single heading structure, made visible
+  // in place instead of clipped - see #17. There is deliberately only
+  // ever one instance of this content in the DOM; toggling `visible`
+  // restyles it rather than mounting a second copy, so the page never
+  // ends up with the CV described twice at two different heading depths.
+  visible?: boolean;
+  onClose?: () => void;
+}
+
+// Always-mounted text rendering of the CV, visually hidden by default. The
+// game canvas is aria-hidden and its dialogs only exist once a visitor has
+// walked to and interacted with something, so without this the CV has no
+// representation outside the canvas at all - unreachable by a screen
+// reader, invisible to find-in-page, and absent from the DOM for anything
+// that doesn't play (#8). Passing `visible` additionally makes it seeable
+// on screen without playing at all (#17).
 //
 // This deliberately reads straight from src/data/*.ts rather than through
 // game/content/dialogs.ts's mapper functions (careerDialog, educationDialog,
@@ -19,9 +34,37 @@ import { TimelineItem } from '../data/types';
 // tuned for a compact dialog panel rather than a linear document. Reading
 // the data directly is simpler than routing through a shape built for a
 // different reader.
-export function CvContent() {
+export function CvContent({ visible = false, onClose }: CvContentProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Escape-to-close, matching DialogPanel's existing pattern. Deliberately
+  // not E/Enter/Space too: those are the game's interact keys, and #17's
+  // AC2 is specifically that no game control is needed to see this content
+  // - binding them here would blur that line rather than clarify it.
+  useEffect(() => {
+    if (!visible) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [visible, onClose]);
+
+  // Also matching DialogPanel: move focus into the panel on open. Without
+  // this, StartScreen's autoFocus'd Explore button - now covered but still
+  // in the DOM underneath - keeps keyboard focus, and a stray Enter/Space
+  // would start the game invisibly behind what looks like the CV panel.
+  useEffect(() => {
+    if (visible) rootRef.current?.focus();
+  }, [visible]);
+
   return (
-    <div className="sr-only">
+    <div ref={rootRef} className={visible ? 'cv-visible' : 'sr-only'} tabIndex={visible ? -1 : undefined}>
+      {visible && (
+        <button className="dialog-close cv-visible-close" onClick={onClose} aria-label="Close CV">
+          ✕
+        </button>
+      )}
       <h1>
         {profileData.name} — {profileData.title}
       </h1>

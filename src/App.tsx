@@ -15,6 +15,7 @@ function App() {
   const [dialog, setDialog] = useState<DialogContent | null>(null);
   const [prompt, setPrompt] = useState<string | null>(null);
   const [scene, setScene] = useState<SceneName>('overworld');
+  const [cvVisible, setCvVisible] = useState(false);
 
   const isTouch = useMemo(
     () =>
@@ -58,14 +59,16 @@ function App() {
 
   return (
     <div className="game-root">
-      <CvContent />
+      <CvContent visible={cvVisible} onClose={() => setCvVisible(false)} />
       <GameCanvas onGame={setGame} />
       {started && <HUD prompt={dialog ? null : prompt} scene={scene} isTouch={isTouch} />}
       {started && isTouch && !dialog && game && <TouchControls virtual={game.virtualInput} />}
       {dialog && (
         <DialogPanel content={dialog} onClose={closeDialog} onAction={handleDialogAction} isTouch={isTouch} />
       )}
-      {!started && <StartScreen onStart={() => setStarted(true)} isTouch={isTouch} />}
+      {!started && (
+        <StartScreen onStart={() => setStarted(true)} onViewCv={() => setCvVisible(true)} isTouch={isTouch} />
+      )}
     </div>
   );
 }

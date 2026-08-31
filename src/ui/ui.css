@@ -302,6 +302,71 @@
   white-space: nowrap;
 }
 
+/* ---------------------------------- visible CV panel */
+/* CvContent with visible={true} (#17) - the same element .sr-only clips by
+   default, made a full-screen readable page instead. Constrained widths go
+   on each child rather than the container, which stays full-bleed so its
+   background/scrolling covers the whole viewport. */
+.cv-visible {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  color: var(--text);
+  text-align: left;
+  padding: 48px max(20px, env(safe-area-inset-right)) 48px max(20px, env(safe-area-inset-left));
+}
+
+.cv-visible h1,
+.cv-visible h2,
+.cv-visible h3,
+.cv-visible p,
+.cv-visible section {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.cv-visible h1 {
+  font-size: 16px;
+  color: var(--accent);
+  line-height: 1.6;
+  margin-block: 0 12px;
+  padding-right: 40px; /* room for the fixed close button */
+}
+
+.cv-visible h2 {
+  font-size: 12px;
+  color: var(--accent);
+  margin-block: 26px 10px;
+  padding-top: 14px;
+  border-top: 2px dashed #c9b797;
+}
+
+.cv-visible h2:first-of-type {
+  margin-top: 20px;
+  border-top: none;
+  padding-top: 0;
+}
+
+.cv-visible h3 {
+  font-size: 10px;
+  margin-block: 14px 4px;
+}
+
+.cv-visible p {
+  font-size: 9px;
+  line-height: 1.9;
+  margin-block: 0 8px;
+}
+
+.cv-visible-close {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 41;
+}
+
 /* ---------------------------------- touch controls */
 .touch-controls {
   position: absolute;
