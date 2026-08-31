@@ -8,8 +8,8 @@
 // because browsers still search and expose that text; there is no way to
 // drive a browser's native find-in-page from this test runner to assert it
 // directly, so this file instead asserts the technique used is that one.
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { education } from '../data/education';
 import { hobbies } from '../data/hobbies';
 import { gardenBeds, pottedPlants, rackTools } from '../data/skills';
@@ -70,5 +70,60 @@ describe('CvContent', () => {
     }
     for (const plant of pottedPlants) expect(container.textContent).toContain(plant.name);
     for (const tool of rackTools) expect(container.textContent).toContain(tool.name);
+  });
+
+  // #17: the same content, made visible in place rather than clipped.
+  describe('visible', () => {
+    it('uses the cv-visible class instead of sr-only, with a close button', () => {
+      const { container } = render(<CvContent visible onClose={vi.fn()} />);
+      const root = container.firstElementChild!;
+      expect(root.className).toBe('cv-visible');
+      expect(screen.getByRole('button', { name: 'Close CV' })).toBeTruthy();
+    });
+
+    it('calls onClose when the close button is clicked', () => {
+      const onClose = vi.fn();
+      render(<CvContent visible onClose={onClose} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Close CV' }));
+      expect(onClose).toHaveBeenCalledOnce();
+    });
+
+    it('calls onClose on Escape', () => {
+      const onClose = vi.fn();
+      render(<CvContent visible onClose={onClose} />);
+      fireEvent.keyDown(window, { code: 'Escape' });
+      expect(onClose).toHaveBeenCalledOnce();
+    });
+
+    it('still renders every heading and entry when visible', () => {
+      render(<CvContent visible onClose={vi.fn()} />);
+      expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual([
+        'Work Experience',
+        'Education',
+        'Skills',
+        'Hobbies',
+      ]);
+    });
+
+    it('moves focus into the panel on open, away from whatever was focused before', () => {
+      const outsideButton = document.createElement('button');
+      outsideButton.textContent = 'outside, focused before the panel opens';
+      document.body.appendChild(outsideButton);
+      outsideButton.focus();
+      expect(document.activeElement).toBe(outsideButton);
+
+      const { container } = render(<CvContent visible onClose={vi.fn()} />);
+
+      expect(document.activeElement).toBe(container.firstElementChild);
+      expect(document.activeElement).not.toBe(outsideButton);
+      outsideButton.remove();
+    });
+  });
+
+  it('ignores Escape when not visible (the always-mounted #8 instance is not a dialog)', () => {
+    const onClose = vi.fn();
+    render(<CvContent onClose={onClose} />);
+    fireEvent.keyDown(window, { code: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
