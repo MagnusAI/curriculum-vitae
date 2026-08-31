@@ -1,5 +1,5 @@
 
-import profileImage from '../assets/profile_image.png'
+import profileImage from '../assets/profile_image.jpg'
 
 // Profile data
 export const profileData = {
