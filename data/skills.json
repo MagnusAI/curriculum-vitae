@@ -1,0 +1,36 @@
+[
+  { "id": "skill-react", "name": "React", "category": "Frontend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-javascript", "name": "JavaScript", "category": "Frontend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-typescript", "name": "TypeScript", "category": "Frontend", "type": "technical", "proficiency": 3, "note": "Used across both frontend and backend work" },
+  { "id": "skill-nextjs", "name": "Next.js", "category": "Frontend", "type": "technical", "proficiency": 3 },
+
+  { "id": "skill-java", "name": "Java", "category": "Backend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-kotlin", "name": "Kotlin", "category": "Backend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-nodejs", "name": "Node.js", "category": "Backend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-csharp", "name": "C#", "category": "Backend", "type": "technical", "proficiency": 3 },
+  { "id": "skill-python", "name": "Python", "category": "Backend", "type": "technical", "proficiency": 3 },
+
+  { "id": "skill-aws-cloud-services", "name": "AWS Cloud Services", "category": "Cloud & DevOps", "type": "technical", "proficiency": 2 },
+  { "id": "skill-ci-cd", "name": "CI/CD", "category": "Cloud & DevOps", "type": "technical", "proficiency": 2 },
+  { "id": "skill-infrastructure-as-code", "name": "Infrastructure as Code", "category": "Cloud & DevOps", "type": "technical", "proficiency": 2 },
+
+  { "id": "skill-hexagonal-architecture", "name": "Hexagonal Architecture", "category": "Architecture", "type": "technical", "proficiency": 2 },
+  { "id": "skill-domain-driven-design", "name": "Domain Driven Design", "category": "Architecture", "type": "technical", "proficiency": 2 },
+  { "id": "skill-microservices", "name": "Microservices", "category": "Architecture", "type": "technical", "proficiency": 2 },
+
+  { "id": "skill-junit", "name": "JUnit", "category": "Testing", "type": "technical", "proficiency": 2 },
+  { "id": "skill-cypress", "name": "Cypress", "category": "Testing", "type": "technical", "proficiency": 2 },
+  { "id": "skill-jest", "name": "Jest", "category": "Testing", "type": "technical", "proficiency": 2 },
+
+  { "id": "skill-agile-methodologies", "name": "Agile Methodologies", "category": "Methodologies", "type": "methodology", "note": "Day-to-day way of working" },
+  { "id": "skill-scrum-and-kanban", "name": "Scrum & Kanban", "category": "Methodologies", "type": "methodology", "note": "Comfortable in both" },
+  { "id": "skill-fullstack-mindset", "name": "Fullstack Mindset", "category": "Methodologies", "type": "soft", "note": "Happiest when owning a feature end to end" },
+
+  { "id": "skill-git", "name": "Git", "category": "Tools", "type": "tool", "proficiency": 3 },
+  { "id": "skill-docker", "name": "Docker", "category": "Tools", "type": "tool", "proficiency": 3 },
+  { "id": "skill-jira", "name": "Jira", "category": "Tools", "type": "tool", "proficiency": 2 },
+  { "id": "skill-opsgenie", "name": "OpsGenie", "category": "Tools", "type": "tool", "proficiency": 2 },
+  { "id": "skill-storybook", "name": "Storybook", "category": "Tools", "type": "tool", "proficiency": 2 },
+  { "id": "skill-contentful-cms", "name": "Contentful (CMS)", "category": "Tools", "type": "tool", "proficiency": 1 },
+  { "id": "skill-sanity-cms", "name": "Sanity (CMS)", "category": "Tools", "type": "tool", "proficiency": 1 }
+]

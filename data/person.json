@@ -1,0 +1,20 @@
+{
+  "id": "magnus-arnild",
+  "name": {
+    "full": "Magnus Arnild",
+    "preferred": "Magnus"
+  },
+  "title": "Software Engineer",
+  "summary": "Software Engineer with experience in financial services and fullstack development. Skilled in building scalable, cloud-native applications using modern technologies such as Java, TypeScript, and AWS. Adept in both frontend and backend development.",
+  "location": {
+    "city": "Copenhagen",
+    "country": "Denmark"
+  },
+  "employmentStatus": "employed",
+  "birthDate": null,
+  "contact": {
+    "email": null
+  },
+  "links": [],
+  "photo": "data/assets/profile.jpg"
+}
