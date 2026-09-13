@@ -1,0 +1,57 @@
+[
+  {
+    "id": "itu-msc-computer-science",
+    "institution": "IT-Universitetet i København",
+    "degree": "Master of Science (MSc)",
+    "field": "Computer Science",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2021-09", "end": "2023-06" },
+    "highlights": [
+      "Finished my master's degree with a thesis on robotics — building, training, and improving an underwater robot that cleans ships' hulls, among other things."
+    ]
+  },
+  {
+    "id": "itu-bsc-computer-software-engineering",
+    "institution": "IT-Universitetet i København",
+    "degree": "Bachelor of Science (BSc)",
+    "field": "Computer Software Engineering",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2017-09", "end": "2020-06" },
+    "highlights": [
+      "Completed my bachelor's degree with a thesis on handling IoT devices in areas with low connectivity."
+    ]
+  },
+  {
+    "id": "kobenhavns-vuc-matematik-a",
+    "institution": "Københavns VUC",
+    "degree": "Matematik A",
+    "field": "Mathematics",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2016-05", "end": "2016-05" },
+    "highlights": [
+      "Upgraded my maths qualification while working full-time, so I could apply for the Computer Science bachelor's programme."
+    ]
+  },
+  {
+    "id": "cbs-ha-almen",
+    "institution": "Copenhagen Business School",
+    "degree": "Bachelor's Degree",
+    "field": "HA almen",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2014-09", "end": "2015-08" },
+    "highlights": [
+      "One year in, I decided to switch paths and part ways with accounting as a career."
+    ]
+  },
+  {
+    "id": "hhx-hillerod-kobenhavn-nord",
+    "institution": "HHX Hillerød København Nord",
+    "degree": "High School",
+    "field": "Højere handelseksamen i Afsætning og Virksomhedsøkonomi (Marketing and Business Economics)",
+    "location": { "city": "Hillerød", "country": "Denmark" },
+    "dateRange": { "start": "2010-08", "end": "2013-06" },
+    "highlights": [
+      "Marketing and Business Economics (Afsætning og Virksomhedsøkonomi)."
+    ]
+  }
+]

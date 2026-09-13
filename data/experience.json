@@ -1,0 +1,81 @@
+[
+  {
+    "id": "kompasbank-software-engineer",
+    "organization": "Kompasbank",
+    "title": "Software Engineer",
+    "employmentType": "full-time",
+    "industry": "finance",
+    "location": { "city": null, "country": "Denmark" },
+    "dateRange": { "start": "2023-08", "end": "present" },
+    "highlights": [
+      "Designed and maintained automation systems for financial services in collaboration with internal departments.",
+      "Built internal tools to enhance operational efficiency.",
+      "Developed and maintained banking applications with a focus on performance and scalability."
+    ]
+  },
+  {
+    "id": "kompasbank-part-time-software-engineer",
+    "organization": "Kompasbank",
+    "title": "Software Engineer",
+    "employmentType": "part-time",
+    "industry": "finance",
+    "location": { "city": null, "country": "Denmark" },
+    "dateRange": { "start": "2022-04", "end": "2023-07" },
+    "highlights": [
+      "Developed and maintained banking applications with a focus on performance and scalability."
+    ]
+  },
+  {
+    "id": "siteimprove-software-engineer",
+    "organization": "Siteimprove",
+    "title": "Software Engineer",
+    "employmentType": "full-time",
+    "industry": "software",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2020-07", "end": "2022-04" },
+    "highlights": [
+      "Developed internal tools to support team workflows and optimize runtime efficiency.",
+      "Created client-facing applications for visualizing internal processes and service runtimes.",
+      "Contributed to core product development with emphasis on maintainability and performance.",
+      "Enhanced frontend user experience through design and performance improvements."
+    ]
+  },
+  {
+    "id": "siteimprove-part-time-software-engineer",
+    "organization": "Siteimprove",
+    "title": "Software Engineer",
+    "employmentType": "part-time",
+    "industry": "software",
+    "location": { "city": "Copenhagen", "country": "Denmark" },
+    "dateRange": { "start": "2019-07", "end": "2020-06" },
+    "highlights": [
+      "Contributed to core product development with emphasis on maintainability and performance.",
+      "Enhanced frontend user experience through design and performance improvements."
+    ]
+  },
+  {
+    "id": "otto-suenson-it-technician",
+    "organization": "Otto Suenson A/S",
+    "title": "IT Technician",
+    "employmentType": "full-time",
+    "industry": "retail",
+    "location": { "city": "Gentofte", "country": "Denmark" },
+    "dateRange": { "start": "2017-08", "end": "2019-06" },
+    "highlights": [
+      "Provided IT support and implemented infrastructure updates across departments."
+    ]
+  },
+  {
+    "id": "otto-suenson-logistics-and-distribution",
+    "organization": "Otto Suenson A/S",
+    "title": "Logistics and Distribution",
+    "employmentType": "full-time",
+    "industry": "retail",
+    "location": { "city": "Gentofte", "country": "Denmark" },
+    "dateRange": { "start": "2015-08", "end": "2017-08" },
+    "highlights": [
+      "Coordinated logistics and managed inventory systems.",
+      "Delivered orders to private customers and restaurants within the region."
+    ]
+  }
+]
